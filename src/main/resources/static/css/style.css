@@ -1,0 +1,23 @@
+.card-sh1{
+    box-shadow: 0 0 8px 0 rgba(0,0,0,0.3);
+}
+
+.card-sh2{
+    box-shadow: 0 0 8px 0 rgba(0,0,0,0.3);
+}
+
+.cat-div{
+    box-shadow: 0 0 10px rgba(0,0,0,-1);
+}
+
+.custom-navbar {
+    background-color: transparent;
+    color: white;
+    font-size:1.1rem;
+  }
+
+.card-sh2:hover{
+    background-color: lightgray;
+    color:green;
+    font-size: 1rem;
+}

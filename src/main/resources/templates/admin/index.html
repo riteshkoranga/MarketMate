@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{base::Layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section>
+      <div class="container p-5 mt-5">
+        <p class="text-center fs-2 mt-2 mb-5">Admin DashBoard</p>
+        <div class="row">
+          <div class="col-md-4 mt-4">
+            <a href="/admin/addProduct" class="text-decoration-none">
+              <div class="card card-sh2 hover">
+                <card class="card-body text-center">
+                  <i class="fa-solid fa-plus fa-2x text-success mb-3"></i>
+                  <h4>Add product</h4>
+                </card>
+              </div>
+            </a>
+          </div>
+
+          <div class="col-md-4 mt-4">
+            <a href="/admin/addCategory" class="text-decoration-none">
+              <div class="card card-sh2 hover">
+                <card class="card-body text-center">
+                  <i class="fa-solid fa-list fa-2x text-success mb-3"></i>
+                  <h4>Add Category</h4>
+                </card>
+              </div>
+            </a>
+          </div>
+
+          <div class="col-md-4 mt-4">
+            <a href="#" class="text-decoration-none">
+              <div class="card card-sh2 hover">
+                <card class="card-body text-center">
+                  <i class="fa-solid fa-table-list fa-2x text-success mb-3"></i>
+
+                  <h4>View Products</h4>
+                </card>
+              </div>
+            </a>
+          </div>
+
+          <div class="col-md-4 mt-5">
+            <a href="#" class="text-decoration-none">
+              <div class="card card-sh2 hover">
+                <card class="card-body text-center">
+                  <i class="fa-solid fa-box-open fa-2x text-success mb-3"></i>
+
+                  <h4>Orders</h4>
+                </card>
+              </div>
+            </a>
+          </div>
+
+          <div class="col-md-4 mt-5">
+            <a href="#" class="text-decoration-none">
+              <div class="card card-sh2 hover">
+                <card class="card-body text-center">
+                  <i class="fa-solid fa-users fa-2x text-success mb-3"></i>
+
+                  <h4>Users</h4>
+                </card>
+              </div>
+            </a>
+          </div>
+
+          <div class="col-md-4 mt-5">
+            <a href="#" class="text-decoration-none">
+              <div class="card card-sh2 hover">
+                <card class="card-body text-center">
+                  <i
+                    class="fa-solid fa-circle-user fa-2x text-success mb-3"
+                  ></i>
+
+                  <h4>Add Admin</h4>
+                </card>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

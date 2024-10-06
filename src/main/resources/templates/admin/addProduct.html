@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{base::Layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section>
+      <div class="container p-5 mt-5 mb-5">
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <div class="card card-sh">
+              <div class="card-header text-center fs-3">Add Product</div>
+              <div class="card-body">
+                <form>
+                  <div class="mb-3">
+                    <label for="productName" class="fs-5"> Product Name</label>
+                    <input
+                      name="productName"
+                      type="text"
+                      placeholder="Product Name"
+                      class="form-control"
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="productDescription" class="fs-5">
+                      Product Description</label
+                    >
+                    <textarea
+                      name="productDescription"
+                      id="productDescription"
+                      class="form-control"
+                      row="7"
+                      col=""
+                    ></textarea>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="selectCategory" class="fs-5"> Category</label>
+                    <select
+                      name="selectCategory"
+                      id="selectCategory"
+                      class="form-control"
+                    >
+                      <option value="select">--Select Category--</option>
+                      <option value="electronics">electronics</option>
+                      <option value=""></option>
+                    </select>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="price" class="fs-5"> Product Price</label>
+                    <input
+                      name="price"
+                      type="number"
+                      placeholder="Product Price"
+                      class="form-control"
+                    />
+                  </div>
+
+                  <div class="row">
+                    <div class="col mb-3">
+                      <label for="stock" class="fs-5"> Product stock</label>
+                      <input
+                        name="stock"
+                        type="number"
+                        placeholder="Product stock"
+                        class="form-control"
+                      />
+                    </div>
+                    <div class="col mb-3">
+                      <label for="image" class="fs-5"> Product Image</label>
+                      <input
+                        name="image"
+                        type="file"
+                        placeholder="Product Image"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-center mt-3">
+                    <button class="btn btn-success fs-5">Submit Details</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
