@@ -46,28 +46,31 @@ public class AdminController {
         String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
         category.setCategoryImage(imageName);
 
-        // if (categoryService.existCategory(category.getName())) {
-        // session.setAttribute("errorMsg", "Category Already exists.");
-        // } else {
-        // category c = categoryService.saveCategory(category);
-        // if (ObjectUtils.isEmpty(c)) {
-        // session.setAttribute("errorMsg", "Internal server error");
-        // } else {
-        // session.setAttribute("successMsg", "Category Saved Successfully");
-        // }
-
-        // }
-        try {
-            category c = categoryService.saveCategory(category);
-            session.setAttribute("successMsg", "Category Saved Successfully");
-        } catch (DataIntegrityViolationException e) {
+        if (categoryService.existsCategory(category.getName())) {
             session.setAttribute("errorMsg", "Category Already exists.");
-        } catch (Exception e) {
-            session.setAttribute("errorMsg", "Internal server error");
+            System.out.println("Category Already exists.");
+        } else {
+            category c = categoryService.saveCategory(category);
+            if (ObjectUtils.isEmpty(c)) {
+                session.setAttribute("errorMsg", "Internal server error");
+                System.out.println("Internal server error");
+            } else {
+                session.setAttribute("successMsg", "Category Saved Successfully");
+                System.out.println("Category Saved Successfully");
+            }
+
+            // }
+            // try {
+            // category c = categoryService.saveCategory(category);
+            // session.setAttribute("successMsg", "Category Saved Successfully");
+            // } catch (DataIntegrityViolationException e) {
+            // session.setAttribute("errorMsg", "Category Already exists.");
+            // } catch (Exception e) {
+            // session.setAttribute("errorMsg", "Internal server error");
+            // }
+
         }
-
         return "redirect:/addCategory";
-
     }
 
 }

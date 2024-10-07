@@ -26,9 +26,9 @@ public class CategoryServiceIMPL implements CategoryService {
     @Override
     public Boolean existsCategory(String name) {
         if (repo.existsByName(name)) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
 }
