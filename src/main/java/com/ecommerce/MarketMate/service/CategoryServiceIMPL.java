@@ -31,4 +31,16 @@ public class CategoryServiceIMPL implements CategoryService {
         return false;
     }
 
+    @Override
+    public Boolean deleteCategory(int id) {
+        category c = repo.findById(id).orElse(null);
+
+        if (c != null) {
+            repo.delete(c);
+            return true;
+        }
+
+        return false;
+    }
+
 }

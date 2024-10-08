@@ -11,4 +11,6 @@ public interface CategoryService {
 
     public Boolean existsCategory(String name);
 
+    public Boolean deleteCategory(int id);
+
 }
