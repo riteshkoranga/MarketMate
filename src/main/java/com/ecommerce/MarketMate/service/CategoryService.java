@@ -13,4 +13,6 @@ public interface CategoryService {
 
     public Boolean deleteCategory(int id);
 
+    public category getCategoryById(int id);
+
 }

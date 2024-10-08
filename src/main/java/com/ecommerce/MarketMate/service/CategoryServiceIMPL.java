@@ -43,4 +43,10 @@ public class CategoryServiceIMPL implements CategoryService {
         return false;
     }
 
+    @Override
+    public category getCategoryById(int id) {
+        category c = repo.findById(id).orElse(null);
+        return c;
+    }
+
 }

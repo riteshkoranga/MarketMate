@@ -28,6 +28,7 @@ import com.ecommerce.MarketMate.service.commonService;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/admin")
@@ -105,6 +106,49 @@ public class AdminController {
         }
         return "redirect:/admin/addCategory";
 
+    }
+
+    @GetMapping("/editCategory/{id}")
+    public String editCategory(@PathVariable int id, Model m) {
+        m.addAttribute("category", categoryService.getCategoryById(id));
+        return "admin/editCategory";
+
+    }
+
+    @PostMapping("/editCategory")
+    public String updateCategory(@ModelAttribute category category, @RequestParam("file") MultipartFile file,
+            HttpSession session) {
+        category oldcat = categoryService.getCategoryById(category.getId());
+        String imageName = file.isEmpty() ? oldcat.getCategoryImage() : file.getOriginalFilename();
+        if (oldcat != null) {
+            oldcat.setName(category.getName());
+            oldcat.setIsActive(category.getIsActive());
+            oldcat.setCategoryImage(imageName);
+
+        }
+        category c = categoryService.saveCategory(oldcat);
+        if (!ObjectUtils.isEmpty(c)) {
+
+            if (!file.isEmpty()) {
+                try {
+                    File saveFile = new ClassPathResource("static/images").getFile();
+                    Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator
+                            + file.getOriginalFilename());
+
+                    System.out.println(path);
+                    Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    e.printStackTrace(); // Handle the exception appropriately
+                    // Optionally, you can log the error or rethrow it as a runtime exception
+                }
+            }
+            session.setAttribute("sucMsg", "Category Updated successfully");
+
+        } else {
+            session.setAttribute("errorMsg", "Error Something wrong!");
+        }
+
+        return "redirect:/admin/editCategory/" + category.getId();
     }
 
 }
