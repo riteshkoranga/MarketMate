@@ -15,13 +15,37 @@
         <div class="row">
           <div class="col-md-8 offset-md-2">
             <div class="card card-sh">
-              <div class="card-header text-center fs-3">Add Product</div>
+              <div class="card-header text-center">
+                <p class="text-center fs-3">Add Product</p>
+                <!-- Success Message -->
+                <th:block th:if="${session.successMsg}">
+                  <p class="text-success fw-bold">[[${session.successMsg}]]</p>
+                  <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block>
+                </th:block>
+
+                <!-- Error Message -->
+                <th:block th:if="${session.errorMsg}">
+                  <p
+                    class="text-danger fw-bold"
+                    th:text="${session.errorMsg}"
+                  ></p>
+                  <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block>
+                </th:block>
+              </div>
               <div class="card-body">
-                <form>
+                <form
+                  action="/admin/saveProduct"
+                  method="post"
+                  enctype="multipart/form-data"
+                >
                   <div class="mb-3">
-                    <label for="productName" class="fs-5"> Product Name</label>
+                    <label for="name" class="fs-5"> Product Name</label>
                     <input
-                      name="productName"
+                      name="name"
                       type="text"
                       placeholder="Product Name"
                       class="form-control"
@@ -29,11 +53,11 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="productDescription" class="fs-5">
+                    <label for="description" class="fs-5">
                       Product Description</label
                     >
                     <textarea
-                      name="productDescription"
+                      name="description"
                       id="productDescription"
                       class="form-control"
                       row="7"
@@ -42,15 +66,14 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="selectCategory" class="fs-5"> Category</label>
+                    <label for="category" class="fs-5"> Category</label>
                     <select
-                      name="selectCategory"
+                      name="category"
                       id="selectCategory"
                       class="form-control"
                     >
                       <option value="select">--Select Category--</option>
-                      <option value="electronics">electronics</option>
-                      <option value=""></option>
+                      <option th:each="c:${categories}">[[${c.name}]]</option>
                     </select>
                   </div>
 
@@ -75,9 +98,9 @@
                       />
                     </div>
                     <div class="col mb-3">
-                      <label for="image" class="fs-5"> Product Image</label>
+                      <label for="file" class="fs-5"> Product Image</label>
                       <input
-                        name="image"
+                        name="file"
                         type="file"
                         placeholder="Product Image"
                         class="form-control"
@@ -85,7 +108,12 @@
                     </div>
                   </div>
                   <div class="d-flex justify-content-center mt-3">
-                    <button class="btn btn-success fs-5">Submit Details</button>
+                    <a
+                      href="admin/viewProducts"
+                      class="btn btn-danger fs-5 me-1"
+                      >View Products
+                    </a>
+                    <button class="btn btn-success fs-5">Add Product</button>
                   </div>
                 </form>
               </div>

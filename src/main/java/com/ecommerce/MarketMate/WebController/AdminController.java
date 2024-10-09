@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,9 +22,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.ecommerce.MarketMate.model.Product;
 import com.ecommerce.MarketMate.model.category;
 import com.ecommerce.MarketMate.service.CategoryService;
 import com.ecommerce.MarketMate.service.commonService;
+import com.ecommerce.MarketMate.service.product.productService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -38,6 +41,8 @@ public class AdminController {
     private CategoryService categoryService;
     @Autowired
     private commonService commonService;
+    @Autowired
+    private productService productService;
 
     @GetMapping("/")
     public String index() {
@@ -45,9 +50,13 @@ public class AdminController {
     }
 
     @GetMapping("/addProduct")
-    public String addProduct() {
+    public String addProduct(Model m) {
+        List<category> categories = categoryService.getAllCategory();
+        m.addAttribute("categories", categories);
         return "admin/addProduct";
     }
+
+    // category mappings start here
 
     @GetMapping("/addCategory")
     public String addCategory(Model m) {
@@ -149,6 +158,45 @@ public class AdminController {
         }
 
         return "redirect:/admin/editCategory/" + category.getId();
+    }
+
+    // category mappings ends here
+
+    // product mappings start here
+    @PostMapping("/saveProduct")
+    public String saveProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile image,
+            HttpSession session) {
+
+        String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
+
+        product.setImage(imageName);
+
+        Product saveProduct = productService.saveProduct(product);
+        if (!ObjectUtils.isEmpty(saveProduct)) {
+
+            try {
+                File saveFile = new ClassPathResource("static/images").getFile();
+                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product" + File.separator
+                        + image.getOriginalFilename());
+
+                System.out.println(path);
+                Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            session.setAttribute("successMsg", "Product saved successfully");
+        } else {
+            session.setAttribute("errorMsg", "Something went wrong");
+
+        }
+
+        return "redirect:/admin/addProduct";
+    }
+
+    @GetMapping("admin/viewProducts")
+    public String viewProducts() {
+        return "admin/viewProducts";
     }
 
 }
