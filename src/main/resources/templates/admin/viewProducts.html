@@ -77,7 +77,9 @@
                   <td class="text-center">[[${p.price}]]</td>
                   <td class="text-center">[[${p.stock}]]</td>
                   <td class="text-center">
-                    <a href="#" class="btn btn-sm btn-success"
+                    <a
+                      th:href="@{'/admin/editProduct/'+${p.id}}"
+                      class="btn btn-sm btn-success"
                       ><i class="fa-solid fa-pen-to-square text-light"></i>
                       Edit</a
                     >

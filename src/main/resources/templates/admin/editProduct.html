@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{base::Layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section>
+      <div class="container p-5 mt-5 mb-5">
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <div class="card card-sh">
+              <div class="card-header text-center">
+                <p class="text-center fs-3">Edit Product</p>
+                <!-- Success Message -->
+                <th:block th:if="${session.successMsg}">
+                  <p class="text-success fw-bold">[[${session.successMsg}]]</p>
+                  <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block>
+                </th:block>
+
+                <!-- Error Message -->
+                <th:block th:if="${session.errorMsg}">
+                  <p
+                    class="text-danger fw-bold"
+                    th:text="${session.errorMsg}"
+                  ></p>
+                  <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block>
+                </th:block>
+              </div>
+              <div class="card-body">
+                <form
+                  action="/admin/updateProduct"
+                  method="post"
+                  enctype="multipart/form-data"
+                >
+                  <input type="hidden" name="id" th:value="${product.id}" />
+                  <div class="mb-3">
+                    <label for="name" class="fs-5"> Product Name</label>
+                    <input
+                      th:value="${product.name}"
+                      name="name"
+                      type="text"
+                      placeholder="Product Name"
+                      class="form-control"
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="description" class="fs-5">
+                      Product Description</label
+                    >
+                    <textarea
+                      name="description"
+                      id="productDescription"
+                      class="form-control"
+                      row="7"
+                      col=""
+                    >
+[[${product.description}]]</textarea
+                    >
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="category" class="fs-5"> Category</label>
+                    <select
+                      name="category"
+                      id="selectCategory"
+                      class="form-control"
+                    >
+                      <option value="select">[[${product.category}]]</option>
+                      <option th:each="c:${categories}">[[${c.name}]]</option>
+                    </select>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="price" class="fs-5"> Product Price</label>
+                    <input
+                      th:value="${product.price}"
+                      name="price"
+                      type="number"
+                      placeholder="Product Price"
+                      class="form-control"
+                    />
+                  </div>
+
+                  <div class="row">
+                    <div class="col mb-3">
+                      <label for="stock" class="fs-5"> Product stock</label>
+                      <input
+                        th:value="${product.stock}"
+                        name="stock"
+                        type="number"
+                        placeholder="Product stock"
+                        class="form-control"
+                      />
+                    </div>
+                    <div class="col mb-3">
+                      <label for="file" class="fs-5"> Product Image</label>
+                      <input
+                        name="file"
+                        type="file"
+                        placeholder="Product Image"
+                        class="form-control"
+                      />
+                    </div>
+                    <div class="mt-1">
+                      <img
+                        th:src="@{'/images/product/'+${product.image}}"
+                        alt=""
+                        width="100px"
+                        height="100px"
+                      />
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-center mt-4">
+                    <a
+                      href="/admin/viewProducts"
+                      class="btn btn-danger fs-5 me-1"
+                      >Back
+                    </a>
+                    <button class="btn btn-success fs-5">Update</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

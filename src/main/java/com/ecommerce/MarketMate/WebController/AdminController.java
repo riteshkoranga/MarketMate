@@ -213,4 +213,26 @@ public class AdminController {
         return "redirect:/admin/viewProducts";
     }
 
+    @GetMapping("/editProduct/{id}")
+    public String editProduct(@PathVariable int id, Model m) {
+        m.addAttribute("product", productService.getProductById(id));
+        m.addAttribute("categories", categoryService.getAllCategory());
+
+        return "admin/editProduct";
+    }
+
+    @PostMapping("/updateProduct")
+    public String updateProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile file,
+            HttpSession session) {
+        Product updateProduct = productService.updateProduct(product, file);
+        if (!ObjectUtils.isEmpty(updateProduct)) {
+            session.setAttribute("successMsg", "Product Updated successfully");
+
+        } else {
+            session.setAttribute("errorMsg", "Something went wrong!");
+        }
+
+        return "redirect:/admin/editProduct/" + product.getId();
+    }
+
 }
