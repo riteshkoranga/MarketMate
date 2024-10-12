@@ -49,4 +49,10 @@ public class CategoryServiceIMPL implements CategoryService {
         return c;
     }
 
+    @Override
+    public List<category> getAllActiveCategory() {
+        List<category> categories = repo.findByIsActiveTrue();
+        return categories;
+    }
+
 }

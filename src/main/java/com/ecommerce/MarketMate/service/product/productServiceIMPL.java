@@ -62,6 +62,13 @@ public class productServiceIMPL implements productService {
             oldProduct.setStock(product.getStock());
             oldProduct.setCategory(product.getCategory());
             oldProduct.setImage(imageName);
+            oldProduct.setIsActive(product.getIsActive());
+
+            oldProduct.setDiscount(product.getDiscount());
+            // 100*5/100; 100-5=95
+            Double discount = product.getPrice() * (product.getDiscount() / 100.0);
+            Double newPrice = product.getPrice() - discount;
+            oldProduct.setDiscountPrice(newPrice);
 
         }
         Product updateProduct = prepo.save(oldProduct);
@@ -83,6 +90,12 @@ public class productServiceIMPL implements productService {
 
         return null;
 
+    }
+
+    @Override
+    public List<Product> getAllActiveProducts() {
+        List<Product> products = prepo.findByIsActiveTrue();
+        return products;
     }
 
 }

@@ -94,6 +94,61 @@
 
                   <div class="row">
                     <div class="col mb-3">
+                      <label for="discount" class="fs-5">Discount rate</label>
+                      <input
+                        th:value="${product.discount}"
+                        name="discount"
+                        type="number"
+                        placeholder="Discount rate"
+                        class="form-control"
+                      />
+                    </div>
+
+                    <div class="col mb-3">
+                      <label for="price" class="fs-5">New Price</label>
+                      <input
+                        th:value="${product.discountPrice}"
+                        type="number"
+                        readonly
+                        placeholder="Discounted Price"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="fs-5">Product Status</label>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="isActive"
+                        value="true"
+                        id="flexRadioDefault1"
+                        th:checked="${product.isActive==true}"
+                        required
+                      />
+                      <label class="form-check-label" for="flexRadioDefault1">
+                        Active
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        value="false"
+                        name="isActive"
+                        id="flexRadioDefault2"
+                        th:checked="${product.isActive==false}"
+                        required
+                      />
+                      <label class="form-check-label" for="flexRadioDefault2">
+                        Not Active
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col mb-3">
                       <label for="stock" class="fs-5"> Product stock</label>
                       <input
                         th:value="${product.stock}"

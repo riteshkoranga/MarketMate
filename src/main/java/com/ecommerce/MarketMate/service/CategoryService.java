@@ -15,4 +15,6 @@ public interface CategoryService {
 
     public category getCategoryById(int id);
 
+    public List<category> getAllActiveCategory();
+
 }
