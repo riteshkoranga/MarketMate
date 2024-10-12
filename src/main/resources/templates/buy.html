@@ -19,34 +19,40 @@
           <div class="row">
             <div class="col-md-6 mt-5">
               <img
-                src="images/macbook.jpg"
+                th:src="@{'/images/product/'+${product.image}}"
                 alt="productImage"
                 width="100%"
                 height="350px"
               />
             </div>
             <div class="col-md-4 mt-5 ms-5 mb-5">
-              <p>Apple Laptop</p>
+              <p class="fs-4">[[${product.name}]]</p>
               <p>
-                <span class="fw-bold">Description</span><br />Apple laptop,
-                256GB SSD, 16GB RAM
+                <span class="fw-bold">Description</span
+                ><br />[[${product.description}]]
               </p>
               <p>
                 <span class="fw-bold">Product Details: </span><br />Status:
-                <span class="badge bg-success"> In Stock </span>
-                <span class="badge bg-warning">Out of stock</span>
+                <th:block th:if="${product.stock>0}">
+                  <span class="badge bg-success"> In Stock </span>
+                </th:block>
+                <th:block th:unless="${product.stock>0}">
+                  <span class="badge bg-warning">Out of stock</span>
+                </th:block>
                 <br />
-                Category: Laptop
+                Category: [[${product.category}]]
 
                 <br />
                 7 days replacement & return policy
               </p>
               <p class="fs-5 fw-bold">
-                Price:&nbsp;&nbsp;&#8377; 70000
+                Price:&nbsp;&nbsp;&#8377; [[${product.discountPrice}]]
                 <span class="fs-6 text-decoration-line-through text-secondary"
-                  >&nbsp;5000&nbsp;
+                  >&nbsp;[[${product.price}]]&nbsp;
                 </span>
-                <span class="fs-6 text-success">50%off</span>
+                <span class="fs-6 text-success"
+                  >[[${product.discount}]]%off</span
+                >
               </p>
               <div class="row">
                 <div class="col-md-4 text-center p-2">
@@ -63,7 +69,14 @@
                 </div>
               </div>
 
-              <a href="" class="btn btn-success col-md-4">Add To Cart</a>
+              <th:block th:if="${product.stock>0}">
+                <a href="" class="btn btn-success col-md-4">Add To Cart</a>
+              </th:block>
+              <th:block th:unless="${product.stock>0}"
+                ><a href="" class="btn btn-danger col-md-4"
+                  >Out of Stock</a
+                ></th:block
+              >
             </div>
           </div>
         </div>

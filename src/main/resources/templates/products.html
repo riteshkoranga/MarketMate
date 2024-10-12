@@ -31,16 +31,18 @@
         <div class="row">
           <div class="col-md-2">
             <div class="list-group">
+              <p class="fs-4 text-center">Categories</p>
               <a
-                href="#"
-                class="list-group-item list-group-item-action bg-body-tertiary fs-5 text-center"
+                href="/products"
+                class="list-group-item list-group-item-action bg-body-tertiary fs-5"
                 aria-current="true"
               >
-                Categories
+                All Categories
               </a>
               <a
-                href="#"
+                th:href="@{'/products?category='+${c.name}}"
                 th:each="c:${categories}"
+                th:classappend="${paramValue==c.name}?'active'"
                 class="list-group-item list-group-item-action"
                 >[[${c.name}]]</a
               >
@@ -49,11 +51,24 @@
           <div class="col-md-10">
             <div class="card">
               <div class="card-body">
-                <p class="fs-3 text-center">Products</p>
+                <p class="fs-3 text-center"></p>
+                <th:block th:if="${session.errorMsg}">
+                  <p
+                    class="text-center mt-5 fs-3 text-danger fw-bold"
+                    th:text="${session.errorMsg}"
+                  ></p>
+                  <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block>
+                </th:block>
 
-                <a href="/buy" class="" style="text-decoration: none">
-                  <div class="row">
-                    <div class="col-md-3 mb-3" th:each="p:${products}">
+                <div class="row">
+                  <div class="col-md-3 mb-3" th:each="p:${products}">
+                    <a
+                      th:href="@{'/product/'+${p.id}}"
+                      class=""
+                      style="text-decoration: none"
+                    >
                       <div class="card card-sh1">
                         <div class="card-body text-center">
                           <img
@@ -81,9 +96,9 @@
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </a>
                   </div>
-                </a>
+                </div>
               </div>
             </div>
           </div>

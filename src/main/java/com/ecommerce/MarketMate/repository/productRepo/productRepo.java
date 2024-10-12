@@ -9,4 +9,6 @@ import com.ecommerce.MarketMate.model.Product;
 public interface productRepo extends JpaRepository<Product, Integer> {
     List<Product> findByIsActiveTrue();
 
+    List<Product> findByCategory(String category);
+
 }

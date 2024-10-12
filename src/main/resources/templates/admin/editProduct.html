@@ -76,7 +76,9 @@
                       id="selectCategory"
                       class="form-control"
                     >
-                      <option value="select">[[${product.category}]]</option>
+                      <option th:value="${product.category}">
+                        [[${product.category}]]
+                      </option>
                       <option th:each="c:${categories}">[[${c.name}]]</option>
                     </select>
                   </div>

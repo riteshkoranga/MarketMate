@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ecommerce.MarketMate.model.Product;
 import com.ecommerce.MarketMate.repository.productRepo.productRepo;
 
+import jakarta.servlet.http.HttpSession;
+
 @Service
 public class productServiceIMPL implements productService {
     @Autowired
@@ -93,8 +95,17 @@ public class productServiceIMPL implements productService {
     }
 
     @Override
-    public List<Product> getAllActiveProducts() {
-        List<Product> products = prepo.findByIsActiveTrue();
+    public List<Product> getAllActiveProducts(String category) {
+        List<Product> products;
+        if (ObjectUtils.isEmpty(category)) {
+            products = prepo.findByIsActiveTrue();
+        } else {
+            products = prepo.findByCategory(category);
+            if (ObjectUtils.isEmpty(products)) {
+
+            }
+        }
+
         return products;
     }
 
