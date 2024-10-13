@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ecommerce.MarketMate.model.Product;
 import com.ecommerce.MarketMate.repository.productRepo.productRepo;
 
-import jakarta.servlet.http.HttpSession;
+
 
 @Service
 public class productServiceIMPL implements productService {

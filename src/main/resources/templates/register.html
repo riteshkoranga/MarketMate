@@ -25,9 +25,27 @@
             <div class="card">
               <div class="card-header">
                 <p class="fs-4 text-center">Register</p>
+                <!-- Success Message -->
+                <th:block th:if="${session.successMsg}">
+                  <p class="text-success fw-bold text-center">[[${session.successMsg}]]</p>
+                  <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block>
+                </th:block>
+
+                <!-- Error Message -->
+                <th:block th:if="${session.errorMsg}">
+                  <p
+                    class="text-danger fw-bold text-center"
+                    th:text="${session.errorMsg}"
+                  ></p>
+                  <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block>
+                </th:block>
               </div>
               <div class="card-body">
-                <form>
+                <form action="/saveUser" enctype="multipart/form-data" method="post">
                   <div class="row mb-3">
                     <div class="col">
                       <label class="form-label" for="name"> Name</label>
@@ -48,7 +66,7 @@
                         <input
                           id="mobile"
                           class="form-control"
-                          name="mobile"
+                          name="mobileNumber"
                           type="number"
                           required
                           placeholder="Mobile Number"
