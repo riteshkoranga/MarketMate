@@ -6,4 +6,5 @@ import com.ecommerce.MarketMate.model.userDetails;
 
 public interface userRepository extends JpaRepository<userDetails,Integer>{
 
+    public userDetails findByEmail(String username);
 }
