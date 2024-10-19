@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.ecommerce.MarketMate.model.Product;
 import com.ecommerce.MarketMate.model.category;
+import com.ecommerce.MarketMate.model.userDetails;
 import com.ecommerce.MarketMate.service.CategoryService;
 import com.ecommerce.MarketMate.service.commonService;
+import com.ecommerce.MarketMate.service.User.userService;
 import com.ecommerce.MarketMate.service.product.productService;
 
 import jakarta.servlet.http.HttpSession;
@@ -43,6 +46,22 @@ public class AdminController {
     private commonService commonService;
     @Autowired
     private productService productService;
+    @Autowired
+    private userService userService;
+
+
+     @ModelAttribute
+    public void getUserDetails(Principal p,Model m){
+            if(p!=null){
+                String email=p.getName();
+                userDetails user=userService.getUserByEmail(email);
+                m.addAttribute("user", user);
+            }
+
+            List<category> allActiveCategories=categoryService.getAllActiveCategory();
+            m.addAttribute("category", allActiveCategories);
+
+    }
 
     @GetMapping("/")
     public String index() {

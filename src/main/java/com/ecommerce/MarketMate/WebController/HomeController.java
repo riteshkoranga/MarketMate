@@ -6,7 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -38,6 +40,19 @@ public class HomeController {
     private productService productService;
     @Autowired
     private userService userService;
+
+    @ModelAttribute
+    public void getUserDetails(Principal p,Model m){
+            if(p!=null){
+                String email=p.getName();
+                userDetails user=userService.getUserByEmail(email);
+                m.addAttribute("user", user);
+            }
+
+            List<category> allActiveCategories=categoryService.getAllActiveCategory();
+            m.addAttribute("category", allActiveCategories);
+
+    }
 
     @GetMapping("/")
     public String index() {
@@ -110,5 +125,7 @@ public class HomeController {
 
         return "redirect:/register";
     }
+
+    
 
 }

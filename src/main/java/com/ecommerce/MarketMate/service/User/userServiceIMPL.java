@@ -25,4 +25,10 @@ public class userServiceIMPL implements userService{
        return saveuser;
        
     }
+
+
+    @Override
+    public userDetails getUserByEmail(String email) {
+       return userRepo.findByEmail(email);
+    }
 }
