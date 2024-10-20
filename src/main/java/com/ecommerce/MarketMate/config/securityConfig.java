@@ -3,6 +3,7 @@ package com.ecommerce.MarketMate.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,10 @@ import org.springframework.security.web.SecurityFilterChain;
 public class securityConfig {
     @Autowired
     private AuthSuccesshandler  authSuccesshandler;
+
+    @Autowired
+    @Lazy
+    private AuthFailurehandler authFailure;
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -40,6 +45,7 @@ public class securityConfig {
         .formLogin(form->form.loginPage("/signin")
             .loginProcessingUrl("/login")
             //.defaultSuccessUrl("/")
+            .failureHandler(authFailure)
             .successHandler(authSuccesshandler)
             )
             

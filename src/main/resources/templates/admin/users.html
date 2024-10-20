@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{base::Layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+  </head>
+  <body>
+    <section>
+      <div class="container-fluid p-5 mt-5">
+        <div class="card card-sh1">
+          <div class="card-header text-center">
+            <div class="d-flex justify-content-left">
+              <div>
+                <a href="/admin/" class="btn btn-primary text-center mt-2 mb-1"
+                  >DashBoard</a
+                >
+                
+              </div>
+              <p
+                class="fs-2 mb-0 mx-auto position-absolute start-50 translate-middle-x"
+              >
+                Users
+              </p>
+            </div>
+
+            <!-- Success Message -->
+            <th:block th:if="${session.successMsg}">
+              <p class="text-danger fw-bold">[[${session.successMsg}]]</p>
+              <th:block
+                th:text="${@commonServiceIMPL.removeSessionMessage()}"
+              ></th:block>
+            </th:block>
+
+            <!-- Error Message -->
+            <th:block th:if="${session.errorMsg}">
+              <p class="text-danger fw-bold" th:text="${session.errorMsg}"></p>
+              <th:block
+                th:text="${@commonServiceIMPL.removeSessionMessage()}"
+              ></th:block>
+            </th:block>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" class="text-center">Id</th>
+                  <th scope="col" class="text-center">Name</th>
+                  <th scope="col" class="text-center">Email</th>
+                  <th scope="col" class="text-center">Mobile</th>
+                  <th scope="col" class="text-center">Address</th>
+                  <th scope="col" class="text-center">Account Status</th>
+                  <th scope="col" class="text-center">Action</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="u,c:${users}">
+                  <th scope="row" class="text-center">[[${c.count}]]</th>
+                  <td class="text-center">[[${u.name}]]</td>
+                  <td class="text-center">[[${u.email}]]</td>
+                  <td class="text-center">[[${u.mobileNumber}]]</td>
+                  <td class="text-center">[[${u.address+','+u.city+','+u.state+','+u.pincode}]]</td>
+                  <td class="text-center">[[${u.isEnabled}]]</td>
+                 
+                  <td class="text-center">
+
+                    <th:block th:if="${u.isEnabled==false}">
+                      <a
+                      th:href="@{'/admin/updateStatus?status=true&id='+${u.id}}"
+                      class="btn btn-sm btn-success"
+                      >
+                      Activate</a
+                    >
+                    </th:block>
+                    <th:block th:if="${u.isEnabled==true}">
+                      <a
+                      th:href="@{'/admin/updateStatus?status=false&id='+${u.id}}"
+                      class="btn btn-sm btn-danger"
+                      >
+                      Deactivate</a
+                    >
+                    </th:block>
+                    
+                    
+                  </td>
+                </tr>
+              </tbody>
+            </table> 
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

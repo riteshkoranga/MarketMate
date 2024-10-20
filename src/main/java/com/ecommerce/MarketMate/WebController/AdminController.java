@@ -262,5 +262,26 @@ public class AdminController {
 
         return "redirect:/admin/editProduct/" + product.getId();
     }
+    @GetMapping("/users")
+    public String getAllUsers(Model m){
+        List<userDetails> users=userService.getAllUsers("ROLE_USER");
+        m.addAttribute("users", users);
+
+        return "/admin/users";
+
+    }
+
+    @GetMapping("/updateStatus")
+    public String updateUserAccountStatus(@RequestParam Boolean status,@RequestParam int id,HttpSession session){
+        Boolean update=userService.updateAccountStatus(id,status);
+
+        if(update){
+            session.setAttribute("successMsg","Account Status Updated");
+
+        }else{
+            session.setAttribute("errorMsg","Something wrong on server.");
+        }
+        return "redirect:/admin/users";
+    }
 
 }
