@@ -48,6 +48,7 @@ public class HomeController {
                 userDetails user=userService.getUserByEmail(email);
                 m.addAttribute("user", user);
             }
+           
 
             List<category> allActiveCategories=categoryService.getAllActiveCategory();
             m.addAttribute("category", allActiveCategories);

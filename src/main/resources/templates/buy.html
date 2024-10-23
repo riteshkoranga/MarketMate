@@ -17,6 +17,54 @@
       >
         <div class="col-md-12">
           <div class="row">
+            <th:block th:if="${session.successMsg}">
+                  <!-- <p
+                    class="text-center mt-5 fs-3 text-danger fw-bold"
+                    th:text="${session.errorMsg}"
+                  ></p>
+                  <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block> -->
+                  <div class="toast-container position-static">
+                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                      <div class="toast-header">
+                        <img src="..." class="rounded me-2" alt="...">
+                        <strong class="me-auto">Bootstrap</strong>
+                        <small class="text-body-secondary">just now</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                      </div>
+                      <div class="toast-body">
+                        [[${session.successMsg}]]
+                      </div>
+                      <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block> 
+                    </div>
+                </th:block>
+              <th:block th:if="${session.errorMsg}">
+                  <!-- <p
+                    class="text-center mt-5 fs-3 text-danger fw-bold"
+                    th:text="${session.errorMsg}"
+                  ></p>
+                  <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block> -->
+                  <div class="toast-container position-static">
+                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                      <div class="toast-header">
+                        <img src="..." class="rounded me-2" alt="...">
+                        <strong class="me-auto">Bootstrap</strong>
+                        <small class="text-body-secondary">just now</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                      </div>
+                      <div class="toast-body">
+                        [[${session.errorMsg}]]
+                      </div>
+                      <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block> 
+                    </div>
+              </th:block>
             <div class="col-md-6 mt-5">
               <img
                 th:src="@{'/images/product/'+${product.image}}"
@@ -70,7 +118,13 @@
               </div>
 
               <th:block th:if="${product.stock>0}">
-                <a href="" class="btn btn-success col-md-4">Add To Cart</a>
+                <th:block th:if="${user==null }">
+                  <a href="/signin" class="btn btn-success col-md-4">Add To Cart</a>
+                </th:block>
+                <th:block th:unless="${user==null }">
+                  <a th:href="@{'/addcart?pid='+${product.id}+'&uid='+${user.id}}" class="btn btn-success col-md-4">Add To Cart</a>
+                </th:block>
+               
               </th:block>
               <th:block th:unless="${product.stock>0}"
                 ><a href="" class="btn btn-danger col-md-4"
