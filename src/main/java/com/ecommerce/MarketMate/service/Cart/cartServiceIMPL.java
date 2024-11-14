@@ -53,7 +53,7 @@ public class cartServiceIMPL implements cartService {
     }
 
     @Override
-    public List<cart> getCartByUser(Integer userId) {
+    public List<cart> getCartsByUser(Integer userId) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getCartByUser'");
     }

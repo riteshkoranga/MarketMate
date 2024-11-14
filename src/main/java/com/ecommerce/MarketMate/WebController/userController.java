@@ -29,16 +29,17 @@ public class userController {
     private userService userService;
     @Autowired
     private CategoryService categoryService;
-
     @Autowired
     private cartService cartService;
+    
     @GetMapping("/")
     public String home(){
         return "user/home";
 
     }
+    
 
-     @ModelAttribute
+    @ModelAttribute
     public void getUserDetails(Principal p,Model m){
             if(p!=null){
                 String email=p.getName();
@@ -52,22 +53,19 @@ public class userController {
     }
     
     @GetMapping("/addCart")
-    public String addCart(@RequestParam Integer pid,@RequestParam Integer uid,HttpSession session){
-        // cart saveCart=cartService.saveCart(pid, uid);
-        // if(ObjectUtils.isEmpty(saveCart)){
-        //     session.setAttribute("errorMsg", "Product add to cart failed");
-        // }
-        // else{
-        //     session.setAttribute("successMsg", "Product added to cart");
-        // }
+    public String addToCart(@RequestParam Integer pid,@RequestParam Integer uid,HttpSession session){
+        cart saveCart=cartService.saveCart(pid, uid);
+        if(ObjectUtils.isEmpty(saveCart)){
+             session.setAttribute("errorMsg", "Product add to cart failed");
+         }
+         else{
+             session.setAttribute("successMsg", "Product added to cart");
+         }
         
         return "redirect:/product/"+pid;
 
     }
 
-    @GetMapping("/addcart")
-    public String addCart(@RequestParam Integer pid,@RequestParam Integer uid){
-        return "hello";
-    }
+    
 
 }

@@ -18,28 +18,16 @@
         <div class="col-md-12">
           <div class="row">
             <th:block th:if="${session.successMsg}">
-                  <!-- <p
-                    class="text-center mt-5 fs-3 text-danger fw-bold"
-                    th:text="${session.errorMsg}"
+                  <p
+                    class="text-center mt-3 fs-3 text-success fw-bold alert alert-success w-1/2" role="alert"
+                    th:text="${session.successMsg}"
                   ></p>
                   <th:block
                     th:text="${@commonServiceIMPL.removeSessionMessage()}"
-                  ></th:block> -->
-                  <div class="toast-container position-static">
-                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                      <div class="toast-header">
-                        <img src="..." class="rounded me-2" alt="...">
-                        <strong class="me-auto">Bootstrap</strong>
-                        <small class="text-body-secondary">just now</small>
-                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                      </div>
-                      <div class="toast-body">
-                        [[${session.successMsg}]]
-                      </div>
-                      <th:block
-                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
-                  ></th:block> 
-                    </div>
+                  ></th:block>
+                  
+                    
+                  
                 </th:block>
               <th:block th:if="${session.errorMsg}">
                   <!-- <p
@@ -49,7 +37,7 @@
                   <th:block
                     th:text="${@commonServiceIMPL.removeSessionMessage()}"
                   ></th:block> -->
-                  <div class="toast-container position-static">
+                  <!-- <div class="toast-container position-static">
                     <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                       <div class="toast-header">
                         <img src="..." class="rounded me-2" alt="...">
@@ -63,7 +51,15 @@
                       <th:block
                     th:text="${@commonServiceIMPL.removeSessionMessage()}"
                   ></th:block> 
-                    </div>
+                    </div> -->
+
+                    <p
+                    class="text-center mt-3 fs-3 text-danger fw-bold alert alert-danger w-1/2" role="alert"
+                    th:text="${session.errorMsg}"
+                  ></p>
+                  <th:block
+                    th:text="${@commonServiceIMPL.removeSessionMessage()}"
+                  ></th:block>
               </th:block>
             <div class="col-md-6 mt-5">
               <img
@@ -122,7 +118,7 @@
                   <a href="/signin" class="btn btn-success col-md-4">Add To Cart</a>
                 </th:block>
                 <th:block th:unless="${user==null }">
-                  <a th:href="@{'/addcart?pid='+${product.id}+'&uid='+${user.id}}" class="btn btn-success col-md-4">Add To Cart</a>
+                  <a th:href="@{'/user/addCart?pid='+${product.id}+'&uid='+${user.id}}" class="btn btn-success col-md-4">Add To Cart</a>
                 </th:block>
                
               </th:block>
