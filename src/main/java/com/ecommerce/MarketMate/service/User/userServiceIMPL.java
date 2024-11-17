@@ -103,5 +103,26 @@ public class userServiceIMPL implements userService{
    }
 
 
+   @Override
+   public void updateUserResetToken(String email, String resetToken) {
+    userDetails findByEmail=userRepo.findByEmail(email);
+    findByEmail.setResetToken(resetToken);
+    userRepo.save(findByEmail);
+   }
+
+
+   @Override
+   public userDetails getUserByToken(String token) {
+      return userRepo.findByResetToken(token);
+     
+   }
+
+
+   @Override
+   public userDetails updateUser(userDetails user) {
+   return userRepo.save(user);
+   }
+
+
    
 }

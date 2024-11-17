@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{base::Layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+  </head>
+  <body>
+    <section>
+      <div class="container-fluid p-5 mt-5">
+        <div class="card card-sh1">
+          <div class="card-header text-center">
+            <div class="d-flex justify-content-center">
+             <p class="fs-2 mb-1">Cart </p>
+              
+            </div>
+
+            <!-- Success Message -->
+            <th:block th:if="${session.successMsg}">
+              <p class="text-danger fw-bold">[[${session.successMsg}]]</p>
+              <th:block
+                th:text="${@commonServiceIMPL.removeSessionMessage()}"
+              ></th:block>
+            </th:block>
+
+            <!-- Error Message -->
+            <th:block th:if="${session.errorMsg}">
+              <p class="text-danger fw-bold" th:text="${session.errorMsg}"></p>
+              <th:block
+                th:text="${@commonServiceIMPL.removeSessionMessage()}"
+              ></th:block>
+            </th:block>
+          </div>
+          <div class="card-body">
+           
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" class="text-center"></th>
+                  <th scope="col" class="text-center">Image</th>
+                  <th scope="col" class="text-center">Product Name</th>
+                
+                  <th scope="col" class="text-center">Price</th>
+                  <th scope="col" class="text-center">Quantity</th>
+                  <th scope="col" class="text-center">Total price</th>
+                 
+                  
+                </tr>
+              </thead>
+              <tbody>
+                
+                <tr th:each="cart,c:${carts}">
+                  <th scope="row" class="text-center">[[${c.count}]]</th>
+                  <td class="text-center">
+                    <img
+                      th:src="@{'/images/product/'+${cart.product.image}}"
+                      alt=""
+                      width="60px"
+                      height="50px"
+                    />
+                  </td>
+                  <td class="text-center">[[${cart.product.name}]]</td>
+                  <td class="text-center">[[${cart.product.discountPrice}]]</td>
+                  <td class="text-center">
+                    <a th:href="@{'/user/cartQuantityUpdate?sy=de&cid='+${cart.id}}" class="text-danger">
+                      <i class="fa-solid fa-minus"></i> 
+                    </a>
+                     
+                    [ [[${cart.quantity}]] ]  
+                    <a th:href="@{'/user/cartQuantityUpdate?sy=in&cid='+${cart.id}}" class="text-success">
+                      <i class="fa-solid fa-plus"></i></td>
+                    </a>
+                    
+                  
+                  <td class="text-center">&#8377; [[${cart.totalPrice}]]</td>
+                  
+                  
+                </tr>
+                <tr class="text-center">
+                    <td colspan="4"></td>
+                    <td class="fw-bold">Total Price </td>
+                    <td class="fw-bold">&#8377; [[${totalOrderPrice}]]</td>
+
+                </tr>
+
+                <th:block th:if="${totalOrderPrice > 0.0}">
+                  <tr class="text-center">
+                    <td colspan="3"></td>
+                    <td><a href="/user/order" class="btn btn-primary">
+                      Proceed Payment
+                    </a></td>
+                    
+  
+                </tr>
+            </th:block>
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

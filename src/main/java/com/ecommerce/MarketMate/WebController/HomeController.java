@@ -2,16 +2,18 @@ package com.ecommerce.MarketMate.WebController;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
-
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -27,9 +29,13 @@ import com.ecommerce.MarketMate.model.category;
 import com.ecommerce.MarketMate.model.userDetails;
 
 import com.ecommerce.MarketMate.service.CategoryService;
+import com.ecommerce.MarketMate.service.Cart.cartService;
 import com.ecommerce.MarketMate.service.product.productService;
+import com.ecommerce.MarketMate.util.CommonUtil;
 import com.ecommerce.MarketMate.service.User.userService;
 
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -41,12 +47,22 @@ public class HomeController {
     @Autowired
     private userService userService;
 
+    @Autowired
+    private CommonUtil CommonUtil;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private cartService cartService;
+
     @ModelAttribute
     public void getUserDetails(Principal p,Model m){
             if(p!=null){
                 String email=p.getName();
                 userDetails user=userService.getUserByEmail(email);
                 m.addAttribute("user", user);
+                Integer countCart=cartService.getCountCart(user.getId());
+                m.addAttribute("countCart", countCart);
             }
            
 
@@ -125,6 +141,73 @@ public class HomeController {
 
 
         return "redirect:/register";
+    }
+
+    //forget password logic
+    @GetMapping("/forgotPassword")
+    public String showForgotPassword(){
+        return "forgotPassword.html";
+
+    }
+
+    @PostMapping("/forgotPassword")
+    public String processForgotPassword(@RequestParam String email,HttpSession session,HttpServletRequest request) throws UnsupportedEncodingException, MessagingException{
+        userDetails user=userService.getUserByEmail(email);
+
+        if(ObjectUtils.isEmpty(user)){
+            session.setAttribute("errorMsg", "Invalid Email, Email not in our system");
+
+        }else{
+            String resetToken=UUID.randomUUID().toString();
+            userService.updateUserResetToken(email,resetToken);
+            
+            //generate URL http://localhost/resetPass?token=sdfsdfsdfsdfdsf
+            String url=CommonUtil.generateUrl(request)+"/resetPassword?token="+resetToken;
+
+            Boolean sendMail=CommonUtil.sendMail(url,email);
+            if(sendMail){
+                session.setAttribute("successMsg", "Email send, Please check");
+            }
+            else{
+                session.setAttribute("errorMsg", "Something wrong on server! Email not send");
+            }
+        }
+        return "redirect:/forgotPassword";
+    }
+
+    @GetMapping("/resetPassword")
+    public String resetPassword(@RequestParam String token,HttpSession session,Model m){
+        userDetails userByToken=userService.getUserByToken(token);
+        if(userByToken==null){
+            m.addAttribute("errorMsg", "Your link is invalid or expired, Please try again");
+            return "error.html";
+
+        }
+        m.addAttribute("token", token);
+        return "resetPassword";
+
+    }
+
+    @PostMapping("/resetPassword")
+    public String resetPassword(@RequestParam String token,@RequestParam String password,HttpSession session,Model  m){
+        userDetails userByToken=userService.getUserByToken(token);
+        if(userByToken==null){
+            m.addAttribute("errorMsg", "Your link is invalid or expired, Please try again");
+            return "error.html";
+
+        }else{
+            userByToken.setPassword(passwordEncoder.encode(password));
+            userByToken.setResetToken(null);
+            userService.updateUser(userByToken);
+            return "redirect:/passwordChange";
+        }
+        
+        
+
+    }
+    @GetMapping("/passwordChange")
+    public String passwordChange(){
+        return "passwordChange";
     }
 
     

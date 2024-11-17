@@ -4,29 +4,30 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Entity
 @Data
-public class cart {
+public class orderAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer id;
 
-    @ManyToOne
-    private userDetails user;
+    private String firstName;
 
-    @ManyToOne
-    private Product product;
+    private String lastName;
 
-    private Integer quantity;
+    private String email;
+    
+    private String mobileNo;
 
-    @Transient
-    private Double totalPrice;
-    @Transient
-    private Double totalOrderAmount;
+    private String address;
 
+    private String city;
+
+    private String state;
+
+    private String pincode;
 
 }

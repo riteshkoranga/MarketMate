@@ -28,6 +28,7 @@ import com.ecommerce.MarketMate.model.category;
 import com.ecommerce.MarketMate.model.userDetails;
 import com.ecommerce.MarketMate.service.CategoryService;
 import com.ecommerce.MarketMate.service.commonService;
+import com.ecommerce.MarketMate.service.Cart.cartService;
 import com.ecommerce.MarketMate.service.User.userService;
 import com.ecommerce.MarketMate.service.product.productService;
 
@@ -48,6 +49,8 @@ public class AdminController {
     private productService productService;
     @Autowired
     private userService userService;
+    @Autowired
+    private cartService cartService;
 
 
      @ModelAttribute
@@ -56,6 +59,8 @@ public class AdminController {
                 String email=p.getName();
                 userDetails user=userService.getUserByEmail(email);
                 m.addAttribute("user", user);
+                Integer countCart=cartService.getCountCart(user.getId());
+                m.addAttribute("countCart", countCart);
             }
 
             List<category> allActiveCategories=categoryService.getAllActiveCategory();

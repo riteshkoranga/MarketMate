@@ -1,5 +1,6 @@
 package com.ecommerce.MarketMate.service.Cart;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +55,53 @@ public class cartServiceIMPL implements cartService {
 
     @Override
     public List<cart> getCartsByUser(Integer userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCartByUser'");
+       List<cart> carts=cartRepo.findByUserId(userId);
+       Double totalOrderPrice=0.0;
+
+        List<cart> updateCarts=new ArrayList<>();
+       for(cart c:carts){
+       Double totalPrice= (c.getProduct().getDiscountPrice()*c.getQuantity());
+        c.setTotalPrice(totalPrice);
+        totalOrderPrice+=totalPrice;
+        c.setTotalOrderAmount(totalOrderPrice);
+        updateCarts.add(c);
+       }
+       
+       return updateCarts;
+    }
+
+    @Override
+    public Integer getCountCart(Integer userId) {
+        Integer countByUserId=cartRepo.countByUserId(userId);
+
+        return countByUserId;
+    }
+
+    @Override
+    public void updateQuantity(String sy, Integer cid) {
+        cart cart=cartRepo.findById(cid).get();
+        int updateQuantity;
+        if(sy.equalsIgnoreCase("de")){
+             updateQuantity=cart.getQuantity()-1;
+
+             if(updateQuantity<=0){
+                cartRepo.delete(cart);
+                
+                
+             }else{
+                cart.setQuantity(updateQuantity);
+                cartRepo.save(cart);
+             }
+             
+        }else{
+            updateQuantity=cart.getQuantity()+1;
+            cart.setQuantity(updateQuantity);
+            cartRepo.save(cart);
+        }
+        
+
+       
+        
     }
 
 }

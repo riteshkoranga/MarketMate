@@ -12,5 +12,7 @@ public void increaseFailedAttempt(userDetails user);
 public void userAccountLock(userDetails user);
 public Boolean unlockAccountTimeExpired(userDetails user);
 public void resetAttempt(int userId);
-
+public void updateUserResetToken(String email, String resetToken);
+public userDetails getUserByToken(String token);
+public userDetails updateUser(userDetails user);
 }

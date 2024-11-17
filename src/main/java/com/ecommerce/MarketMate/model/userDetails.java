@@ -31,4 +31,5 @@ public class userDetails {
     private Boolean accountNonLocked;
     private Integer failedAttempt;
     private Date lockTime;
+    private String resetToken;
 }
