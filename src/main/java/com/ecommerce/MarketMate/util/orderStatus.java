@@ -5,7 +5,8 @@ public enum orderStatus {
     Order_RECIEVED(2,"Order Recieved"),
     Order_Processed(3,"Product Packed and Shipped"),
     OUT_FOR_DELIVERY(4,"Out For Delivery"),
-    DELIVERED(5,"Delivered");
+    DELIVERED(5,"Delivered"),
+    CANCEL(6,"Cancelled");
 
     orderStatus(int id, String name) {
         this.id=id;

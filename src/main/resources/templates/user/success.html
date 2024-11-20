@@ -1,12 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h2>order Succesful!</h2>
-    
-</body>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{base::Layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+  </head>
+  <body>
+    <section>
+      <div class="conatiner mt-5 p-5">
+       
+        <div class="row">
+            <div class="col-md-6 offset-md-3 text-center">
+                <i class="fa-solid fa-circle-check fa-5x text-success"></i>
+                <h2 class="mt-4 text-success">Order Confirmed!</h2>
+                <h2 class="mt-3 text-success">Wish You Happy Shopping :)</h2>
+                <div class="text-center mt-5">
+                    <a href="/" class="btn btn-primary">Home</a>
+                    <a href="/user/userOrders" class="btn btn-secondary">Order Details</a>
+                </div>
+
+                
+            </div>
+            
+           
+                
+            
+            
+
+      </div>
+      </div>
+    </section>
+  </body>
 </html>

@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.ecommerce.MarketMate.model.cart;
 import com.ecommerce.MarketMate.model.category;
 import com.ecommerce.MarketMate.model.orderRequest;
+import com.ecommerce.MarketMate.model.productOrder;
 import com.ecommerce.MarketMate.model.userDetails;
 import com.ecommerce.MarketMate.service.CategoryService;
 import com.ecommerce.MarketMate.service.Cart.cartService;
 import com.ecommerce.MarketMate.service.User.userService;
 import com.ecommerce.MarketMate.service.orderService.orderService;
+import com.ecommerce.MarketMate.util.orderStatus;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -99,7 +101,17 @@ public class userController {
     }
 
     @GetMapping("/order")
-    public String order(){
+    public String order(Principal p,Model m){
+        userDetails user=getLoggedInUserDetails(p);
+        List<cart> carts=cartService.getCartsByUser(user.getId());
+        m.addAttribute("carts", carts);
+        if(carts.size()>0){
+            Double orderPrice=carts.get(carts.size()-1).getTotalOrderAmount();
+            Double totalOrderPrice=carts.get(carts.size()-1).getTotalOrderAmount()+250+100;
+
+            m.addAttribute("orderPrice", orderPrice);
+            m.addAttribute("totalOrderPrice", totalOrderPrice);
+        }
         return "/user/order";
     }
 
@@ -108,7 +120,39 @@ public class userController {
         //System.out.println(request);
         userDetails user=getLoggedInUserDetails(p);
         orderService.saveOrder(user.getId(), request);
+        return "redirect:/user/success";
+    }
+    @GetMapping("/success")
+    public String loadSuccess(){
         return "/user/success";
+    }
+
+    @GetMapping("/userOrders")
+    public String userOrders(Model m,Principal p){
+        userDetails user=getLoggedInUserDetails(p);
+
+        List<productOrder>orders=orderService.getOrderByUser(user.getId());
+        m.addAttribute("orders", orders);
+        return "/user/userOrders";
+    }
+    @GetMapping("/updateStatus")
+    public String updateStatus(@RequestParam Integer id,@RequestParam Integer st,HttpSession session){
+        orderStatus[] values=orderStatus.values();
+        String status=null;
+        for(orderStatus orderst:values){
+            if(orderst.getId().equals(st)){
+                status=orderst.getName();
+            }
+
+        }
+        Boolean updateOrder=orderService.updateOrderStatus(id, status);
+        if(updateOrder){
+            session.setAttribute("successMsg", "Order Status Updated");
+        }
+        else{
+            session.setAttribute("errorMsg", "Order Status updation failure");
+        }
+        return "redirect:/user/userOrders";
     }
 
     

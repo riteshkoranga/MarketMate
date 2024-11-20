@@ -31,27 +31,32 @@ public class AuthFailurehandler extends SimpleUrlAuthenticationFailureHandler{
             AuthenticationException exception) throws IOException, ServletException {
         String email=request.getParameter("username");
         userDetails user=userRepo.findByEmail(email);
-
-        if(user.getIsEnabled()){
-            if(user.getAccountNonLocked()){
-                if(user.getFailedAttempt()<AppConstant.ATTEMPTS){
-userService.increaseFailedAttempt(user);
+        
+        if(user!=null){
+            if(user.getIsEnabled()){
+                if(user.getAccountNonLocked()){
+                    if(user.getFailedAttempt()<AppConstant.ATTEMPTS){
+    userService.increaseFailedAttempt(user);
+                    }
+                    else{
+                        userService.userAccountLock(user);
+                        exception=new LockedException("Your login attempts are exceeded, try again after some time");
+                    }
+    
+                }else{
+                    if(userService.unlockAccountTimeExpired(user)){
+                         exception=new LockedException("Your account unlocked,login limit exceeded");
+                    }
+                    exception =new LockedException("Your Acoount is unlocked, please log in");
                 }
-                else{
-                    userService.userAccountLock(user);
-                    exception=new LockedException("Your login attempts are exceeded, try again after some time");
-                }
-
+    
             }else{
-                if(userService.unlockAccountTimeExpired(user)){
-                     exception=new LockedException("Your account unlocked,login limit exceeded");
-                }
-                exception =new LockedException("Your Acoount is unlocked, please log in");
+                exception =new LockedException("Your Acoount is Inactive");
             }
-
         }else{
-            exception =new LockedException("Your Acoount is Inactive");
+            exception =new LockedException("Email and password Invalid");
         }
+        
         super.setDefaultFailureUrl("/signin?error");
         super.onAuthenticationFailure(request, response, exception);
     }

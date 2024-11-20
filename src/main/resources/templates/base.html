@@ -104,7 +104,7 @@
                 
                 <th:block th:if="${user!=null}">
                   <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/user/cart"
+                    <a class="nav-link active"  href="/user/cart"
                       ><i class="fa-solid fa-cart-shopping"></i> Cart [ [[${countCart} ]] ] </a
                     >
                   </li>
@@ -121,20 +121,23 @@
                     <ul class="dropdown-menu">
                       <li><a class="dropdown-item" href="#">Profile</a></li>
                       <li>
-                        <a class="dropdown-item" href="#">+91-[[${user.mobileNumber}]]</a>
+                        <a class="dropdown-item" href="/user/userOrders">My Orders</a>
                       </li>
                       <li><hr class="dropdown-divider" /></li>
-                      <li>
+                      <!-- <li>
                         <a class="dropdown-item" href="#">[[${user.email}]]</a>
-                      </li>
-                    </ul>
-                  </li>
-  
-                  <li class="nav-item">
+                      </li> -->
+                      <li class="dropdown-item" href="/logout">Logout</li>
+
+                  <!-- <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/logout"
                       >Logout <i class="fa-solid fa-right-to-bracket"></i></a
                     >
+                  </li> -->
+                      
+                    </ul>
                   </li>
+  
                    </th:block>
                 
               </ul>
