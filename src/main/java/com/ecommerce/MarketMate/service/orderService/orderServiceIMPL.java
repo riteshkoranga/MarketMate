@@ -96,4 +96,11 @@ public class orderServiceIMPL implements orderService{
         
     }
 
+
+
+    @Override
+    public productOrder getOrdersByOrderId(String orderId) {
+        return orderRepo.findByOrderId(orderId);
+    }
+
 }

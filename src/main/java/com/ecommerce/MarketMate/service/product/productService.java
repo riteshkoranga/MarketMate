@@ -20,4 +20,5 @@ public interface productService {
 
     public List<Product> getAllActiveProducts(String category);
 
+    public List<Product> searchProduct(String ch);
 }

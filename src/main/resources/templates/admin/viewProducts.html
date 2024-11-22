@@ -31,6 +31,7 @@
                 Products
               </p>
             </div>
+            
 
             <!-- Success Message -->
             <th:block th:if="${session.successMsg}">
@@ -48,9 +49,30 @@
               ></th:block>
             </th:block>
           </div>
+
+
+          <form action="/admin/viewProducts" method="get">
+            <div class="row  mt-4 mb-3 ms-3 ">
+              <div class="col-md-4 offset-md-3">
+                <input type="text" class="form-control" name="ch" required placeholder="Product Name or Category" />
+              </div>
+              <div class="col">
+                <button class="btn btn-success me-2">Search Product</button>
+                <th:block th:if="${search}">
+                  <a href="/admin/viewProducts" class="btn btn-primary">View All Orders</a>
+                </th:block>
+              </div>
+    
+              
+    
+              
+    
+            </div>
+    
+          </form>
           <div class="card-body">
             <table class="table">
-              <thead>
+              <thead class="table-light">
                 <tr>
                   <th scope="col" class="text-center">Id</th>
                   <th scope="col" class="text-center">Image</th>

@@ -122,11 +122,24 @@
                     <i class="fa-solid fa-user"></i> [[${user.name}]]
                     </a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="/user/profile">Profile</a></li>
-                      <li>
-                        <a class="dropdown-item" href="/user/userOrders">My Orders</a>
-                      </li>
-                      <li><hr class="dropdown-divider" /></li>
+
+                      <th:block th:if="${user.role=='ROLE_USER'}">
+                        <li><a class="dropdown-item" href="/user/profile">Profile</a></li>
+                        <li>
+                          <a class="dropdown-item" href="/user/userOrders">My Orders</a>
+                        </li>
+                        <li><hr class="dropdown-divider" /></li>
+                      </th:block>
+
+                      <th:block th:if="${user.role=='ROLE_ADMIN'}">
+                        <div class="me-5">
+                          <li><a class="dropdown-item" href="/admin/">Admin Panel</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                        </div>
+                        
+                      </th:block>
+                      
+                      
                       <!-- <li>
                         <a class="dropdown-item" href="#">[[${user.email}]]</a>
                       </li> -->

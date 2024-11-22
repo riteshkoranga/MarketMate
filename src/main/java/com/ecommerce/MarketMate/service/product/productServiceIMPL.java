@@ -109,4 +109,12 @@ public class productServiceIMPL implements productService {
         return products;
     }
 
+    @Override
+    public List<Product> searchProduct(String ch) {
+
+        return prepo.findByNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch,ch);
+        
+         
+    }
+
 }

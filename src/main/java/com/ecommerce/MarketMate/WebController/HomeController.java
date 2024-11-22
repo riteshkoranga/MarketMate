@@ -210,6 +210,26 @@ public class HomeController {
         return "passwordChange";
     }
 
+    @GetMapping("/search")
+    public String searchProduct(@RequestParam String ch,Model m){
+
+        if(ObjectUtils.isEmpty(ch)){
+            return "redirect:/products";
+            
+        }
+        else{
+            List<Product> searchProducts=productService.searchProduct(ch);
+            List<category> categories=categoryService.getAllActiveCategory();
+            m.addAttribute("categories", categories);
+            m.addAttribute("products", searchProducts);
+            return "products";
+        }
+        
+        
+
+        
+    }
+
     
 
 }

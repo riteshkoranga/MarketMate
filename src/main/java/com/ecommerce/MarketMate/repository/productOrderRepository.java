@@ -10,4 +10,6 @@ public interface productOrderRepository extends JpaRepository<productOrder,Integ
 
     List<productOrder> findByUserIdOrderByIdDesc(Integer userId);
 
+    productOrder findByOrderId(String orderId);
+
 }
