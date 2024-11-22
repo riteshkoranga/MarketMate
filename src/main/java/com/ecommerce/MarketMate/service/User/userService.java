@@ -3,6 +3,7 @@ package com.ecommerce.MarketMate.service.User;
 import com.ecommerce.MarketMate.model.userDetails;
 import java.util.*;
 
+
 public interface userService {
  public userDetails saveUser(userDetails user);
  public userDetails getUserByEmail(String email);
@@ -15,4 +16,6 @@ public void resetAttempt(int userId);
 public void updateUserResetToken(String email, String resetToken);
 public userDetails getUserByToken(String token);
 public userDetails updateUser(userDetails user);
+
+public userDetails updateUserProfile(userDetails user);
 }

@@ -25,12 +25,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.ecommerce.MarketMate.model.Product;
 import com.ecommerce.MarketMate.model.category;
+import com.ecommerce.MarketMate.model.productOrder;
 import com.ecommerce.MarketMate.model.userDetails;
 import com.ecommerce.MarketMate.service.CategoryService;
 import com.ecommerce.MarketMate.service.commonService;
 import com.ecommerce.MarketMate.service.Cart.cartService;
 import com.ecommerce.MarketMate.service.User.userService;
+import com.ecommerce.MarketMate.service.orderService.orderService;
 import com.ecommerce.MarketMate.service.product.productService;
+import com.ecommerce.MarketMate.util.CommonUtil;
+import com.ecommerce.MarketMate.util.orderStatus;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -51,7 +55,10 @@ public class AdminController {
     private userService userService;
     @Autowired
     private cartService cartService;
-
+    @Autowired
+    private orderService orderService;
+@Autowired
+    private CommonUtil mail;
 
      @ModelAttribute
     public void getUserDetails(Principal p,Model m){
@@ -288,5 +295,40 @@ public class AdminController {
         }
         return "redirect:/admin/users";
     }
+
+    @GetMapping("/orders")
+    public String getAllOrders(Model m){
+        List<productOrder>orders=orderService.getAllOrders();
+        m.addAttribute("orders", orders);
+        return "/admin/orders";
+
+    }
+    
+
+    @PostMapping("/updateOrderStatus")
+    public String updateStatus(@RequestParam Integer id,@RequestParam Integer st,HttpSession session){
+        orderStatus[] values=orderStatus.values();
+        String status=null;
+        for(orderStatus orderst:values){
+            if(orderst.getId().equals(st)){
+                status=orderst.getName();
+            }
+
+        }
+        productOrder updateOrder=orderService.updateOrderStatus(id, status);
+        try{
+            mail.SendMailForProductOrder(updateOrder, status);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!ObjectUtils.isEmpty(updateOrder)){
+            session.setAttribute("successMsg", "Order Status Updated");
+        }
+        else{
+            session.setAttribute("errorMsg", "Order Status updation failure");
+        }
+        return "redirect:/admin/orders";
+    }
+
 
 }

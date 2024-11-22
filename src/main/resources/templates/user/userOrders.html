@@ -61,15 +61,15 @@
                         <td class="text-center">
                           <th:block th:if="${o.status!='Cancelled'}">
                             <a th:href="@{'/user/updateStatus?id='+${o.id}+'&st=6'}" class="btn btn-danger">
-                              Cancel Order
+                              Cancel Order</a>
                           </th:block>
 
                           <th:block th:unless="${o.status!='Cancelled'}">
                             <a href="#" class="btn btn-danger disabled">
-                              Cancel Order
+                              Cancel Order</a>
                           </th:block>
                           
-                        </a></td>
+                        </td>
                        
                         
                       </tr>

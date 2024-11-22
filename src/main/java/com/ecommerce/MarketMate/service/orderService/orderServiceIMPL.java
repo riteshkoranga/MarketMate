@@ -1,5 +1,6 @@
 package com.ecommerce.MarketMate.service.orderService;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +15,10 @@ import com.ecommerce.MarketMate.model.orderRequest;
 import com.ecommerce.MarketMate.model.productOrder;
 import com.ecommerce.MarketMate.repository.productOrderRepository;
 import com.ecommerce.MarketMate.repository.cartRepository.cartRepository;
+import com.ecommerce.MarketMate.util.CommonUtil;
 import com.ecommerce.MarketMate.util.orderStatus;
+
+import jakarta.mail.MessagingException;
 @Service
 public class orderServiceIMPL implements orderService{
     @Autowired
@@ -23,10 +27,13 @@ public class orderServiceIMPL implements orderService{
     @Autowired
     private cartRepository cartRepo;
 
+    @Autowired
+    private CommonUtil commonUtil;
+
 
 
     @Override
-    public void saveOrder(Integer userId, orderRequest orderRequest) {
+    public void saveOrder(Integer userId, orderRequest orderRequest) throws UnsupportedEncodingException, MessagingException {
         List<cart> carts=cartRepo.findByUserId(userId);
         for(cart cart:carts){
             productOrder order=new productOrder();
@@ -51,7 +58,8 @@ public class orderServiceIMPL implements orderService{
 
             order.setOrderAddress(address);
 
-            orderRepo.save(order);
+            productOrder saveOrder=orderRepo.save(order);
+            commonUtil.SendMailForProductOrder(saveOrder, "successful");
 
             
         }
@@ -69,15 +77,23 @@ public class orderServiceIMPL implements orderService{
 
 
     @Override
-    public Boolean updateOrderStatus(Integer id, String status) {
+    public productOrder updateOrderStatus(Integer id, String status) {
        Optional<productOrder> findById=orderRepo.findById(id);
        if(findById.isPresent()){
         productOrder order=findById.get();
         order.setStatus(status);
-        orderRepo.save(order);
-        return true;
+        productOrder updateOrder=orderRepo.save(order);
+        return updateOrder;
        }
-       return false;
+       return null;
+    }
+
+
+
+    @Override
+    public List<productOrder> getAllOrders() {
+        return orderRepo.findAll();
+        
     }
 
 }

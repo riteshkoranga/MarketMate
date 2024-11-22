@@ -1,9 +1,12 @@
 package com.ecommerce.MarketMate.WebController;
 
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.List;
 
+import org.eclipse.angus.mail.handlers.multipart_mixed;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ecommerce.MarketMate.model.cart;
 import com.ecommerce.MarketMate.model.category;
@@ -22,8 +26,10 @@ import com.ecommerce.MarketMate.service.CategoryService;
 import com.ecommerce.MarketMate.service.Cart.cartService;
 import com.ecommerce.MarketMate.service.User.userService;
 import com.ecommerce.MarketMate.service.orderService.orderService;
+import com.ecommerce.MarketMate.util.CommonUtil;
 import com.ecommerce.MarketMate.util.orderStatus;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -38,6 +44,12 @@ public class userController {
     private cartService cartService;
     @Autowired
     private orderService orderService;
+
+    @Autowired
+    private CommonUtil mail;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     
     @GetMapping("/")
     public String home(){
@@ -116,7 +128,7 @@ public class userController {
     }
 
     @PostMapping("/saveOrder")
-    public String saveOrder(@ModelAttribute orderRequest request,Principal p){
+    public String saveOrder(@ModelAttribute orderRequest request,Principal p) throws UnsupportedEncodingException, MessagingException{
         //System.out.println(request);
         userDetails user=getLoggedInUserDetails(p);
         orderService.saveOrder(user.getId(), request);
@@ -145,14 +157,67 @@ public class userController {
             }
 
         }
-        Boolean updateOrder=orderService.updateOrderStatus(id, status);
-        if(updateOrder){
+        
+        productOrder updateOrder=orderService.updateOrderStatus(id, status);
+
+        try{
+            mail.SendMailForProductOrder(updateOrder, status);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!ObjectUtils.isEmpty(updateOrder)){
             session.setAttribute("successMsg", "Order Status Updated");
         }
         else{
             session.setAttribute("errorMsg", "Order Status updation failure");
         }
         return "redirect:/user/userOrders";
+    }
+
+    
+    
+    @GetMapping("/profile")
+    public String profile(){
+        return "/user/profile";
+    }
+    @PostMapping("/updateProfile")
+    public String updateProfile(@ModelAttribute userDetails user,HttpSession session){
+        userDetails updatedProfile=userService.updateUserProfile(user);
+
+        if(ObjectUtils.isEmpty(updatedProfile)){
+session.setAttribute("errorMsg", "Profile Not updated");
+        }
+        else{
+            session.setAttribute("successMsg", "Profile updated");
+        }
+
+        
+        return "redirect:/user/profile";
+    }
+
+    @PostMapping("/changePassword")
+    public String changePassword(@RequestParam String newPassword,@RequestParam String curPassword,Principal p,HttpSession session){
+        userDetails loggedInUser=getLoggedInUserDetails(p);
+        boolean matches=passwordEncoder.matches(curPassword, loggedInUser.getPassword());
+
+        if(matches){
+            String encodedPassword=passwordEncoder.encode(newPassword);
+            loggedInUser.setPassword(encodedPassword);
+            userDetails updatedUser=userService.updateUser(loggedInUser);
+            if(ObjectUtils.isEmpty(updatedUser)){
+                session.setAttribute("errorMsg", "Password not Updated, Error in server");
+
+            }else{
+                session.setAttribute("successMsg", "Password Updated Successfully");
+            }
+
+        }else{
+            session.setAttribute("errorMsg", "Current Password Invalid");
+        }
+
+
+        return "redirect:/user/profile";
+
     }
 
     

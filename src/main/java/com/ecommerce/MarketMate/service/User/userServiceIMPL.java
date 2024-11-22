@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import com.ecommerce.MarketMate.model.userDetails;
 import com.ecommerce.MarketMate.repository.userDetailsrepo.userRepository;
@@ -121,6 +122,24 @@ public class userServiceIMPL implements userService{
    @Override
    public userDetails updateUser(userDetails user) {
    return userRepo.save(user);
+   }
+
+
+   @Override
+   public userDetails updateUserProfile(userDetails user) {
+     userDetails dbuser=userRepo.findById(user.getId()).get();
+
+
+     if(!ObjectUtils.isEmpty(dbuser)){
+      dbuser.setName(user.getName());
+      dbuser.setMobileNumber(user.getMobileNumber());
+      dbuser.setAddress(user.getAddress());
+      dbuser.setCity(user.getCity());
+      dbuser.setState(user.getState());
+      dbuser.setPincode(user.getPincode());
+      userRepo.save(dbuser);
+     }
+      return dbuser;
    }
 
 

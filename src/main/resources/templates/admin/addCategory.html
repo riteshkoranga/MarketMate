@@ -15,7 +15,9 @@
         <div class="row">
           <div class="col-md-3 me-5">
             <div class="card card-sh1 mt-5 mb-3">
+             
               <div class="card-header text-center">
+                
                 <p class="fs-4">Add Category</p>
                 <!-- Success Message -->
                 <th:block th:if="${session.successMsg}">
@@ -105,7 +107,19 @@
           <div class="col-md-8 mt-5">
             <div class="card card-sh1">
               <div class="card-header text-center fs-3">
-                Categories
+                <div class="d-flex justify-content-left">
+                  <div>
+                    <a href="/admin/" class="btn btn-primary text-center mt-2 mb-1"
+                      >DashBoard</a
+                    >
+                    
+                  </div>
+                  <p
+                    class="fs-2 mb-0 mx-auto position-absolute start-50 translate-middle-x"
+                  >
+                    categories
+                  </p>
+                </div>
                 <th:block th:if="${session.sucMsg}">
                   <p class="text-success fw-bold">[[${session.sucMsg}]]</p>
                   <th:block
