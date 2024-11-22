@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -88,18 +89,30 @@ public class HomeController {
 
     @GetMapping("/products")
     public String product(Model m, @RequestParam(value = "category", defaultValue = "") String category,
+    @RequestParam(name = "pageNo", defaultValue="0") Integer pageNo,@RequestParam(name = "pageSize",defaultValue = "3") Integer pageSize,
             HttpSession session) {
 
         // System.out.println(category);
         List<category> categories = categoryService.getAllActiveCategory();
-        List<Product> products = productService.getAllActiveProducts(category);
+        //List<Product> products = productService.getAllActiveProducts(category);
+        
+        m.addAttribute("categories", categories);
+        //m.addAttribute("products", products);
+        m.addAttribute("paramValue", category);
+
+        Page<Product> page=productService.getAllActiveProductsPagination(pageNo, pageSize,category);
+        List<Product> products = page.getContent();
         if (ObjectUtils.isEmpty(products)) {
             session.setAttribute("errorMsg", "No Products available currently :(");
         }
-        m.addAttribute("categories", categories);
-        m.addAttribute("products", products);
-        m.addAttribute("paramValue", category);
-
+        m.addAttribute("products",products);
+        m.addAttribute("productSize",products.size());
+        m.addAttribute("pageSize", products.size());
+        m.addAttribute("pageNo", page.getNumber());
+        m.addAttribute("totalElements", page.getTotalElements());
+        m.addAttribute("totalPages", page.getTotalPages());
+        m.addAttribute("isFirst", page.isFirst());
+        m.addAttribute("isLast", page.isLast());
         return "products";
     }
 

@@ -11,6 +11,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -115,6 +118,19 @@ public class productServiceIMPL implements productService {
         return prepo.findByNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch,ch);
         
          
+    }
+
+    @Override
+    public Page<Product> getAllActiveProductsPagination(Integer pageNo, Integer pageSize,String category) {
+        Pageable pageable=PageRequest.of(pageNo, pageSize);
+        Page<Product> pageProduct=null;
+        if (ObjectUtils.isEmpty(category)) {
+            pageProduct = prepo.findByIsActiveTrue(pageable);
+        } else {
+            pageProduct = prepo.findByCategory(pageable,category);
+            
+        }
+        return pageProduct;
     }
 
 }
