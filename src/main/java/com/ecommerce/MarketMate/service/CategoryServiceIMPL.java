@@ -2,6 +2,9 @@ package com.ecommerce.MarketMate.service;
 
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.MarketMate.model.category;
@@ -53,6 +56,13 @@ public class CategoryServiceIMPL implements CategoryService {
     public List<category> getAllActiveCategory() {
         List<category> categories = repo.findByIsActiveTrue();
         return categories;
+    }
+
+    @Override
+    public Page<category> getAllCategoryPagination(Integer pageNo,Integer pageSize) {
+       Pageable pageable=PageRequest.of(pageNo, pageSize);
+       return repo.findAll(pageable);
+        
     }
 
 }

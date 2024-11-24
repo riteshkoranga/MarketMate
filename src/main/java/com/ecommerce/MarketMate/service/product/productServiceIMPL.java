@@ -39,6 +39,14 @@ public class productServiceIMPL implements productService {
         return prepo.findAll();
     }
 
+    
+
+    @Override
+    public Page<Product> getAllProductsPagination(Integer pageNo, Integer pageSize) {
+       Pageable pageable=PageRequest.of(pageNo, pageSize);
+       return prepo.findAll(pageable);
+    }
+
     @Override
     public Boolean deleteProduct(int id) {
         Product product = prepo.findById(id).orElse(null);
@@ -131,6 +139,14 @@ public class productServiceIMPL implements productService {
             
         }
         return pageProduct;
+    }
+
+    @Override
+    public Page<Product> searchProductPagination(String ch, Integer pageNo, Integer pageSize) {
+        Pageable pageable=PageRequest.of(pageNo, pageSize);
+        return prepo.findByNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch,ch,pageable);
+
+        
     }
 
 }
