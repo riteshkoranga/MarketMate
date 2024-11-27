@@ -148,29 +148,38 @@ public class HomeController {
         //String imageName=file.isEmpty()?"default.jpg":file.getOriginalFilename();
         //user.setProfileImage(imageName);
         // @RequestParam("img") MultipartFile file,
-        userDetails saveuser=userService.saveUser(user);
+        Boolean existsEmail=userService.existsUser(user.getEmail());
 
-        if(!ObjectUtils.isEmpty(saveuser)){
-            session.setAttribute("successMsg", "User Registration Successful");
-            // if(!file.isEmpty()){
-            //     try {
-            //         File saveFile = new ClassPathResource("static/images").getFile();
-            //         Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "profile_img" + File.separator
-            //                 + file.getOriginalFilename());
+        if(existsEmail){
+            session.setAttribute("errorMsg", "Email address already exists, Try another email or login");
+        }
+        else{
+            userDetails saveuser=userService.saveUser(user);
 
-            //         System.out.println(path);
-            //         Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            //     } catch (IOException e) {
-            //         e.printStackTrace(); // Handle the exception appropriately
-            //         // Optionally, you can log the error or rethrow it as a runtime exception
-            //     }
-            //     session.setAttribute("sucMsg", "Category Updated successfully");
-            // }
-            
+            if(!ObjectUtils.isEmpty(saveuser)){
+                session.setAttribute("successMsg", "User Registration Successful");
+                // if(!file.isEmpty()){
+                //     try {
+                //         File saveFile = new ClassPathResource("static/images").getFile();
+                //         Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "profile_img" + File.separator
+                //                 + file.getOriginalFilename());
+    
+                //         System.out.println(path);
+                //         Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                //     } catch (IOException e) {
+                //         e.printStackTrace(); // Handle the exception appropriately
+                //         // Optionally, you can log the error or rethrow it as a runtime exception
+                //     }
+                //     session.setAttribute("sucMsg", "Category Updated successfully");
+                // }
+                
+            }
+            else {
+                session.setAttribute("errorMsg", "Error! Something wrong!");
+            }   
         }
-        else {
-            session.setAttribute("errorMsg", "Error! Something wrong!");
-        }
+
+        
 
 
         return "redirect:/register";

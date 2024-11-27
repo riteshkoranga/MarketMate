@@ -21,5 +21,6 @@ public userDetails updateUserProfile(userDetails user);
 
 public userDetails saveAdmin(userDetails user);
 
+public Boolean existsUser(String email);
 
 }

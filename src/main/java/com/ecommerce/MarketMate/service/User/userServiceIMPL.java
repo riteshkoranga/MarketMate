@@ -161,5 +161,13 @@ public class userServiceIMPL implements userService{
    }
 
 
+
+
+   @Override
+   public Boolean existsUser(String email) {
+      return userRepo.existsByEmail(email);
+   }
+
+
    
 }
