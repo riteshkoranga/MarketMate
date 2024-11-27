@@ -18,4 +18,8 @@ public userDetails getUserByToken(String token);
 public userDetails updateUser(userDetails user);
 
 public userDetails updateUserProfile(userDetails user);
+
+public userDetails saveAdmin(userDetails user);
+
+
 }

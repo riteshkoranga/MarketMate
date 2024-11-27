@@ -45,10 +45,11 @@
                   enctype="multipart/form-data"
                 >
                   <div class="mb-3">
-                    <label for="name" class="fs-5">Category Name</label>
+                    <label class="fs-5">Category Name</label>
                     <input
                       type="text"
                       name="name"
+                      id="name"
                       class="form-control"
                       required
                     />
@@ -61,7 +62,7 @@
                         type="radio"
                         name="isActive"
                         value="true"
-                        id="flexRadioDefault1"
+                        id="active"
                         checked
                         required
                       />
@@ -75,7 +76,7 @@
                         type="radio"
                         value="false"
                         name="isActive"
-                        id="flexRadioDefault2"
+                        id="inactive"
                         required
                       />
                       <label class="form-check-label" for="flexRadioDefault2">
@@ -91,6 +92,7 @@
                     <input
                       type="file"
                       name="file"
+                      id="file"
                       class="form-control"
                       required
                     />
@@ -173,21 +175,26 @@
                   <div class="col-md-6 offset-md-1">
                     
                       <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                          <li class="page-item">
-                            <a class="page-link" th:classappend="${isFirst}?'disabled':''" th:href="@{'/admin/addCategory?pageNo='+${pageNo-1}}" aria-label="Previous">
-                              <span aria-hidden="true">&laquo;</span>
-                            </a>
-                          </li>
-                          <li th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item" th:classappend="${pageNo+1==i}?'active':''">
-                            <a class="page-link" th:href="@{'/admin/addCategory?pageNo='+${i-1}}">[[${i}]]</a></li>
+                       
+
+                          <th:block th:if="${pageSize>0}">
+                            <ul class="pagination">
+                              <li class="page-item">
+                                <a class="page-link" th:classappend="${isFirst}?'disabled':''" th:href="@{'/admin/addCategory?pageNo='+${pageNo-1}}" aria-label="Previous">
+                                  <span aria-hidden="true">&laquo;</span>
+                                </a>
+                              </li>
+                              <li th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item" th:classappend="${pageNo+1==i}?'active':''">
+                                <a class="page-link" th:href="@{'/admin/addCategory?pageNo='+${i-1}}">[[${i}]]</a></li>
+                              
+                              <li class="page-item">
+                                <a class="page-link" th:classappend="${isLast}?'disabled':''" th:href="@{'/admin/addCategory?pageNo='+${pageNo+1}}" aria-label="Next">
+                                  <span aria-hidden="true">&raquo;</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </th:block>
                           
-                          <li class="page-item">
-                            <a class="page-link" th:classappend="${isLast}?'disabled':''" th:href="@{'/admin/addCategory?pageNo='+${pageNo+1}}" aria-label="Next">
-                              <span aria-hidden="true">&raquo;</span>
-                            </a>
-                          </li>
-                        </ul>
                       </nav>
                     
                     

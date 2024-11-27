@@ -14,8 +14,8 @@
       <div class="container-fluid p-5 mt-5">
         <div class="card card-sh1">
           <div class="card-header text-center">
-            <div class="d-flex justify-content-left">
-              <div>
+            <div class="d-flex justify-content-left" th:if="${userType==1}">
+              <div >
                 <a href="/admin/" class="btn btn-primary text-center mt-2 mb-1"
                   >DashBoard</a
                 >
@@ -25,6 +25,20 @@
                 class="fs-2 mb-0 mx-auto position-absolute start-50 translate-middle-x"
               >
                 Users
+              </p>
+            </div>
+
+            <div class="d-flex justify-content-left" th:if="${userType==2}">
+              <div >
+                <a href="/admin/" class="btn btn-primary text-center mt-2 mb-1"
+                  >DashBoard</a
+                >
+                
+              </div>
+              <p
+                class="fs-2 mb-0 mx-auto position-absolute start-50 translate-middle-x"
+              >
+                Admins
               </p>
             </div>
 
@@ -71,7 +85,7 @@
 
                     <th:block th:if="${u.isEnabled==false}">
                       <a
-                      th:href="@{'/admin/updateStatus?status=true&id='+${u.id}}"
+                      th:href="@{'/admin/updateStatus?status=true&id='+${u.id}+'&type='+${userType}}"
                       class="btn btn-sm btn-success"
                       >
                       Activate</a
@@ -79,7 +93,7 @@
                     </th:block>
                     <th:block th:if="${u.isEnabled==true}">
                       <a
-                      th:href="@{'/admin/updateStatus?status=false&id='+${u.id}}"
+                      th:href="@{'/admin/updateStatus?status=false&id='+${u.id}+'&type='+${userType}}"
                       class="btn btn-sm btn-danger"
                       >
                       Deactivate</a

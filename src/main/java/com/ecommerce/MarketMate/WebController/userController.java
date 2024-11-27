@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ecommerce.MarketMate.model.cart;
-import com.ecommerce.MarketMate.model.category;
+import com.ecommerce.MarketMate.model.Category;
 import com.ecommerce.MarketMate.model.orderRequest;
 import com.ecommerce.MarketMate.model.productOrder;
 import com.ecommerce.MarketMate.model.userDetails;
@@ -66,7 +66,7 @@ public class userController {
                 m.addAttribute("user", user);
             }
 
-            List<category> allActiveCategories=categoryService.getAllActiveCategory();
+            List<Category> allActiveCategories=categoryService.getAllActiveCategory();
             m.addAttribute("category", allActiveCategories);
 
     }

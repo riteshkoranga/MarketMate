@@ -20,4 +20,7 @@ public interface productRepo extends JpaRepository<Product, Integer> {
 
     Page<Product> findByNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(String ch,String ch2,Pageable pageable);
 
+    Page<Product> findByisActiveTrueAndNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(String ch, String ch2,
+            Pageable pageable);
+
 }

@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.MarketMate.model.category;
+import com.ecommerce.MarketMate.model.Category;
 import com.ecommerce.MarketMate.repository.CategoryRepo;
 
 @Service
@@ -16,27 +16,24 @@ public class CategoryServiceIMPL implements CategoryService {
     private CategoryRepo repo;
 
     @Override
-    public category saveCategory(category category1) {
+    public Category saveCategory(Category cat) {
 
-        return repo.save(category1);
+        return repo.save(cat);
     }
 
     @Override
-    public List<category> getAllCategory() {
+    public List<Category> getAllCategory() {
         return repo.findAll();
     }
 
     @Override
     public Boolean existsCategory(String name) {
-        if (repo.existsByName(name)) {
-            return true;
-        }
-        return false;
+        return repo.existsByName(name);
     }
 
     @Override
     public Boolean deleteCategory(int id) {
-        category c = repo.findById(id).orElse(null);
+        Category c = repo.findById(id).orElse(null);
 
         if (c != null) {
             repo.delete(c);
@@ -47,19 +44,19 @@ public class CategoryServiceIMPL implements CategoryService {
     }
 
     @Override
-    public category getCategoryById(int id) {
-        category c = repo.findById(id).orElse(null);
+    public Category getCategoryById(int id) {
+        Category c = repo.findById(id).orElse(null);
         return c;
     }
 
     @Override
-    public List<category> getAllActiveCategory() {
-        List<category> categories = repo.findByIsActiveTrue();
+    public List<Category> getAllActiveCategory() {
+        List<Category> categories = repo.findByIsActiveTrue();
         return categories;
     }
 
     @Override
-    public Page<category> getAllCategoryPagination(Integer pageNo,Integer pageSize) {
+    public Page<Category> getAllCategoryPagination(Integer pageNo,Integer pageSize) {
        Pageable pageable=PageRequest.of(pageNo, pageSize);
        return repo.findAll(pageable);
         

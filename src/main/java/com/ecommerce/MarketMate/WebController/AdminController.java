@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.ecommerce.MarketMate.model.Product;
-import com.ecommerce.MarketMate.model.category;
+import com.ecommerce.MarketMate.model.Category;
 import com.ecommerce.MarketMate.model.productOrder;
 import com.ecommerce.MarketMate.model.userDetails;
 import com.ecommerce.MarketMate.service.CategoryService;
@@ -59,7 +60,10 @@ public class AdminController {
     @Autowired
     private orderService orderService;
 @Autowired
-    private CommonUtil mail;
+    private CommonUtil commonUtil;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
      @ModelAttribute
     public void getUserDetails(Principal p,Model m){
@@ -71,7 +75,7 @@ public class AdminController {
                 m.addAttribute("countCart", countCart);
             }
 
-            List<category> allActiveCategories=categoryService.getAllActiveCategory();
+            List<Category> allActiveCategories=categoryService.getAllActiveCategory();
             m.addAttribute("category", allActiveCategories);
 
     }
@@ -83,7 +87,7 @@ public class AdminController {
 
     @GetMapping("/addProduct")
     public String addProduct(Model m) {
-        List<category> categories = categoryService.getAllCategory();
+        List<Category> categories = categoryService.getAllCategory();
         m.addAttribute("categories", categories);
         
         return "admin/addProduct";
@@ -92,11 +96,15 @@ public class AdminController {
     // category mappings start here
 
     @GetMapping("/addCategory")
-    public String addCategory(Model m,@RequestParam(name = "pageNo",defaultValue = "0") Integer pageNo,@RequestParam(name = "pageSize",defaultValue = "2") Integer pageSize) {
+    public String addCategory(Model m,@RequestParam(name = "pageNo",defaultValue = "0") Integer pageNo,@RequestParam(name = "pageSize",defaultValue = "10") Integer pageSize) {
         //m.addAttribute("categories", categoryService.getAllCategory());
-        Page<category> page=categoryService.getAllCategoryPagination(pageNo, pageSize);
+        Page<Category> page=categoryService.getAllCategoryPagination(pageNo, pageSize);
         
-        List<category> categories = page.getContent();
+        if (page == null) {
+            m.addAttribute("errorMsg", "No categories found.");
+            return "admin/addCategory";
+        }
+        List<Category> categories = page.getContent();
         
         m.addAttribute("categories",categories);
         //m.addAttribute("categorySize",products.size());
@@ -110,43 +118,50 @@ public class AdminController {
     }
 
     @PostMapping("/saveCategory")
-    public String savecategory(@ModelAttribute category category, @RequestParam("file") MultipartFile file,
-            HttpSession session) {
+    public String saveCategory(
+        @RequestParam("name") String name,
+        @RequestParam("isActive") String isActive,
+        @RequestParam("file") MultipartFile file,
+        HttpSession session) {
 
-        // commonService.removeSessionMessage(session);
+    System.out.println("Name: " + name);
+    System.out.println("Is Active: " + isActive);
 
-        String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
-        category.setCategoryImage(imageName);
+    Category category = new Category();
+    category.setName(name);
+    category.setIsActive(Boolean.parseBoolean(isActive));
 
-        if (categoryService.existsCategory(category.getName())) {
-            session.setAttribute("errorMsg", "Category Already exists.");
-            return "redirect:/admin/addCategory";
+    String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
+    category.setCategoryImage(imageName);
 
-        } else {
-            category c = categoryService.saveCategory(category);
-            if (ObjectUtils.isEmpty(c)) {
-                session.setAttribute("errorMsg", "Internal server error");
+    // Rest of your logic
+    Boolean existCategory = categoryService.existsCategory(category.getName());
 
-            } else {
-                try {
-                    File saveFile = new ClassPathResource("static/images").getFile();
-                    Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator
-                            + file.getOriginalFilename());
-
-                    System.out.println(path);
-                    Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    e.printStackTrace(); // Handle the exception appropriately
-                    // Optionally, you can log the error or rethrow it as a runtime exception
-                }
-                session.setAttribute("successMsg", "Category Saved Successfully");
-
-            }
-
-        }
-
+    if (existCategory) {
+        session.setAttribute("errorMsg", "Category Already exists.");
         return "redirect:/admin/addCategory";
+    } else {
+        Category c = categoryService.saveCategory(category);
+        if (ObjectUtils.isEmpty(c)) {
+            session.setAttribute("errorMsg", "Internal server error");
+        } else {
+            try {
+                File saveFile = new ClassPathResource("static/images").getFile();
+                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator
+                        + file.getOriginalFilename());
+
+                System.out.println(path);
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            session.setAttribute("successMsg", "Category Saved Successfully");
+        }
     }
+
+    return "redirect:/admin/addCategory";
+}
+
 
     @GetMapping("/deleteCategory/{id}")
     public String deleteCategory(@PathVariable int id, HttpSession session) {
@@ -164,46 +179,59 @@ public class AdminController {
 
     @GetMapping("/editCategory/{id}")
     public String editCategory(@PathVariable int id, Model m) {
+        System.out.println(id);
+        System.out.println(categoryService.getCategoryById(id));
         m.addAttribute("category", categoryService.getCategoryById(id));
-        return "admin/editCategory";
+        return "/admin/editCategory";
 
     }
 
     @PostMapping("/editCategory")
-    public String updateCategory(@ModelAttribute category category, @RequestParam("file") MultipartFile file,
-            HttpSession session) {
-        category oldcat = categoryService.getCategoryById(category.getId());
-        String imageName = file.isEmpty() ? oldcat.getCategoryImage() : file.getOriginalFilename();
-        if (oldcat != null) {
-            oldcat.setName(category.getName());
-            oldcat.setIsActive(category.getIsActive());
-            oldcat.setCategoryImage(imageName);
+public String updateCategory(
+        @RequestParam("id") int id,
+        @RequestParam("name") String name,
+        @RequestParam("isActive") boolean isActive,
+        @RequestParam(value = "file", required = false) MultipartFile file,
+        HttpSession session) {
+    System.out.println("Editing category with ID: " + id);
 
-        }
-        category c = categoryService.saveCategory(oldcat);
-        if (!ObjectUtils.isEmpty(c)) {
-
-            if (!file.isEmpty()) {
-                try {
-                    File saveFile = new ClassPathResource("static/images").getFile();
-                    Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator
-                            + file.getOriginalFilename());
-
-                    System.out.println(path);
-                    Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    e.printStackTrace(); // Handle the exception appropriately
-                    // Optionally, you can log the error or rethrow it as a runtime exception
-                }
-            }
-            session.setAttribute("sucMsg", "Category Updated successfully");
-
-        } else {
-            session.setAttribute("errorMsg", "Error Something wrong!");
-        }
-
-        return "redirect:/admin/editCategory/" + category.getId();
+    // Fetch the existing category by ID
+    Category oldcat = categoryService.getCategoryById(id);
+    if (oldcat == null) {
+        session.setAttribute("errorMsg", "Category not found!");
+        return "redirect:/admin/categories";
     }
+
+    System.out.println("Old Category Name: " + oldcat.getName());
+
+    // Update category fields
+    String imageName = file != null && !file.isEmpty() ? file.getOriginalFilename() : oldcat.getCategoryImage();
+    oldcat.setName(name);
+    oldcat.setIsActive(isActive);
+    oldcat.setCategoryImage(imageName);
+
+    // Save the updated category
+    Category updatedCategory = categoryService.saveCategory(oldcat);
+    if (updatedCategory != null) {
+        if (file != null && !file.isEmpty()) {
+            try {
+                // Save the new image file
+                File saveFile = new ClassPathResource("static/images").getFile();
+                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator
+                        + file.getOriginalFilename());
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        session.setAttribute("sucMsg", "Category updated successfully!");
+    } else {
+        session.setAttribute("errorMsg", "Error: Something went wrong!");
+    }
+
+    return "redirect:/admin/editCategory/" + id;
+}
+
 
     // category mappings ends here
 
@@ -321,16 +349,23 @@ public class AdminController {
         return "redirect:/admin/editProduct/" + product.getId();
     }
     @GetMapping("/users")
-    public String getAllUsers(Model m){
-        List<userDetails> users=userService.getAllUsers("ROLE_USER");
+    public String getAllUsers(Model m,@RequestParam Integer type){
+        List<userDetails> users=null;
+        if(type==1){
+            users=userService.getAllUsers("ROLE_USER");
+        }else{
+           users =userService.getAllUsers("ROLE_ADMIN");
+        }
+       m.addAttribute("userType", type);
         m.addAttribute("users", users);
 
         return "/admin/users";
 
     }
+   
 
     @GetMapping("/updateStatus")
-    public String updateUserAccountStatus(@RequestParam Boolean status,@RequestParam int id,HttpSession session){
+    public String updateUserAccountStatus(@RequestParam Boolean status,@RequestParam int id,@RequestParam Integer type,HttpSession session){
         Boolean update=userService.updateAccountStatus(id,status);
 
         if(update){
@@ -339,7 +374,7 @@ public class AdminController {
         }else{
             session.setAttribute("errorMsg","Something wrong on server.");
         }
-        return "redirect:/admin/users";
+        return "redirect:/admin/users?type="+type;
     }
 
     @GetMapping("/orders")
@@ -376,7 +411,7 @@ public class AdminController {
         }
         productOrder updateOrder=orderService.updateOrderStatus(id, status);
         try{
-            mail.SendMailForProductOrder(updateOrder, status);
+            commonUtil.SendMailForProductOrder(updateOrder, status);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -411,6 +446,91 @@ public class AdminController {
         
 
         
+    }
+
+    @GetMapping("/addAdmin")
+    public String adminAdd(){
+        return "/admin/addAdmin";
+    }
+
+    @PostMapping("/saveAdmin")
+    public String saveAdmin(@ModelAttribute userDetails user,HttpSession session){
+        //String imageName=file.isEmpty()?"default.jpg":file.getOriginalFilename();
+        //user.setProfileImage(imageName);
+        // @RequestParam("img") MultipartFile file,
+        userDetails saveuser=userService.saveAdmin(user);
+
+        if(!ObjectUtils.isEmpty(saveuser)){
+            session.setAttribute("successMsg", "Admin Registration Successful");
+            // if(!file.isEmpty()){
+            //     try {
+            //         File saveFile = new ClassPathResource("static/images").getFile();
+            //         Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "profile_img" + File.separator
+            //                 + file.getOriginalFilename());
+
+            //         System.out.println(path);
+            //         Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            //     } catch (IOException e) {
+            //         e.printStackTrace(); // Handle the exception appropriately
+            //         // Optionally, you can log the error or rethrow it as a runtime exception
+            //     }
+            //     session.setAttribute("sucMsg", "Category Updated successfully");
+            // }
+            
+        }
+        else {
+            session.setAttribute("errorMsg", "Error! Something wrong!");
+        }
+
+
+        return "redirect:/admin/addAdmin";
+    }
+
+    @GetMapping("/profile")
+    public String profile(){
+        return "/admin/profile";
+    }
+
+    
+
+    @PostMapping("/updateProfile")
+    public String updateProfile(@ModelAttribute userDetails user,HttpSession session){
+        userDetails updatedProfile=userService.updateUserProfile(user);
+
+        if(ObjectUtils.isEmpty(updatedProfile)){
+session.setAttribute("errorMsg", "Profile Not updated");
+        }
+        else{
+            session.setAttribute("successMsg", "Profile updated");
+        }
+
+        
+        return "redirect:/admin/profile";
+    }
+
+    @PostMapping("/changePassword")
+    public String changePassword(@RequestParam String newPassword,@RequestParam String curPassword,Principal p,HttpSession session){
+        userDetails loggedInUser=commonUtil.getLoggedInUserDetails(p);
+        boolean matches=passwordEncoder.matches(curPassword, loggedInUser.getPassword());
+
+        if(matches){
+            String encodedPassword=passwordEncoder.encode(newPassword);
+            loggedInUser.setPassword(encodedPassword);
+            userDetails updatedUser=userService.updateUser(loggedInUser);
+            if(ObjectUtils.isEmpty(updatedUser)){
+                session.setAttribute("errorMsg", "Password not Updated, Error in server");
+
+            }else{
+                session.setAttribute("successMsg", "Password Updated Successfully");
+            }
+
+        }else{
+            session.setAttribute("errorMsg", "Current Password Invalid");
+        }
+
+
+        return "redirect:/admin/profile";
+
     }
 
    

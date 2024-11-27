@@ -24,15 +24,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.StringUtils;
 
 import com.ecommerce.MarketMate.model.Product;
-import com.ecommerce.MarketMate.model.category;
+import com.ecommerce.MarketMate.model.Category;
 import com.ecommerce.MarketMate.model.userDetails;
 
 import com.ecommerce.MarketMate.service.CategoryService;
 import com.ecommerce.MarketMate.service.Cart.cartService;
 import com.ecommerce.MarketMate.service.product.productService;
 import com.ecommerce.MarketMate.util.CommonUtil;
+
+import ch.qos.logback.core.util.StringUtil;
+
 import com.ecommerce.MarketMate.service.User.userService;
 
 import jakarta.mail.MessagingException;
@@ -67,13 +71,22 @@ public class HomeController {
             }
            
 
-            List<category> allActiveCategories=categoryService.getAllActiveCategory();
+            List<Category> allActiveCategories=categoryService.getAllActiveCategory();
             m.addAttribute("category", allActiveCategories);
 
     }
 
     @GetMapping("/")
-    public String index() {
+    public String index(Model m) {
+        List<Category> allActiveCategory=categoryService.getAllActiveCategory().stream()
+        .sorted((c1, c2) -> Integer.compare(c2.getId(), c1.getId())) 
+        .limit(6).toList();
+        List<Product> allActiveProducts = productService.getAllActiveProducts("").stream()
+    .sorted((p1, p2) -> Integer.compare(p2.getId(), p1.getId())) // Option 1
+    .limit(8)
+    .toList();
+        m.addAttribute("category", allActiveCategory);
+        m.addAttribute("products", allActiveProducts);
         return "index";
     }
 
@@ -90,17 +103,24 @@ public class HomeController {
     @GetMapping("/products")
     public String product(Model m, @RequestParam(value = "category", defaultValue = "") String category,
     @RequestParam(name = "pageNo", defaultValue="0") Integer pageNo,@RequestParam(name = "pageSize",defaultValue = "3") Integer pageSize,
-            HttpSession session) {
+            HttpSession session,@RequestParam(defaultValue = "") String ch) {
 
         // System.out.println(category);
-        List<category> categories = categoryService.getAllActiveCategory();
+        List<Category> categories = categoryService.getAllActiveCategory();
         //List<Product> products = productService.getAllActiveProducts(category);
         
         m.addAttribute("categories", categories);
         //m.addAttribute("products", products);
         m.addAttribute("paramValue", category);
+        Page<Product> page=null;
+        if(StringUtils.isEmpty(ch)){
+             page=productService.getAllActiveProductsPagination(pageNo, pageSize,category);
+        }else{
+            page=productService.searchActiveProductPagination( pageNo, pageSize,category,ch);
 
-        Page<Product> page=productService.getAllActiveProductsPagination(pageNo, pageSize,category);
+        }
+
+        
         List<Product> products = page.getContent();
         if (ObjectUtils.isEmpty(products)) {
             session.setAttribute("errorMsg", "No Products available currently :(");
@@ -232,7 +252,7 @@ public class HomeController {
         }
         else{
             List<Product> searchProducts=productService.searchProduct(ch);
-            List<category> categories=categoryService.getAllActiveCategory();
+            List<Category> categories=categoryService.getAllActiveCategory();
             m.addAttribute("categories", categories);
             m.addAttribute("products", searchProducts);
             return "products";

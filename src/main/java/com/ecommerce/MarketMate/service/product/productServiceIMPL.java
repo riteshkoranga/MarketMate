@@ -141,6 +141,23 @@ public class productServiceIMPL implements productService {
         return pageProduct;
     }
 
+    
+
+    @Override
+    public Page<Product> searchActiveProductPagination(Integer pageNo, Integer pageSize,String category,String ch) {
+        Pageable pageable=PageRequest.of(pageNo, pageSize);
+        Page<Product> pageProduct=null;
+        pageProduct=prepo.findByisActiveTrueAndNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch,ch,pageable);
+        // if (ObjectUtils.isEmpty(category)) {
+        //     pageProduct = prepo.findByIsActiveTrue(pageable);
+        // } else {
+        //     pageProduct = prepo.findByCategory(pageable,category);
+            
+        // }
+        return pageProduct;
+       
+    }
+
     @Override
     public Page<Product> searchProductPagination(String ch, Integer pageNo, Integer pageSize) {
         Pageable pageable=PageRequest.of(pageNo, pageSize);

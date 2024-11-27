@@ -1,25 +1,25 @@
 package com.ecommerce.MarketMate.service;
 
-import com.ecommerce.MarketMate.model.category;
+import com.ecommerce.MarketMate.model.Category;
 import java.util.*;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 
 public interface CategoryService {
 
-    public category saveCategory(category category1);
+    public Category saveCategory(Category cat);
 
-    public List<category> getAllCategory();
+    public List<Category> getAllCategory();
 
     public Boolean existsCategory(String name);
 
     public Boolean deleteCategory(int id);
 
-    public category getCategoryById(int id);
+    public Category getCategoryById(int id);
 
-    public List<category> getAllActiveCategory();
+    public List<Category> getAllActiveCategory();
 
-    public Page<category> getAllCategoryPagination(Integer pageNo,Integer pageSize);
+    public Page<Category> getAllCategoryPagination(Integer pageNo,Integer pageSize);
 
 }

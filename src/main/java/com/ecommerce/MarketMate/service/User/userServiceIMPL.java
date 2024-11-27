@@ -36,8 +36,26 @@ public class userServiceIMPL implements userService{
        
     }
 
+    
+
 
     @Override
+   public userDetails saveAdmin(userDetails user) {
+      user.setRole("ROLE_ADMIN");
+        user.setIsEnabled(true);
+        user.setAccountNonLocked(true);
+        user.setFailedAttempt(0);
+      
+        String encodePassword=passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodePassword);
+       userDetails saveuser=userRepo.save(user);
+       return saveuser;
+   }
+
+
+
+
+   @Override
     public userDetails getUserByEmail(String email) {
        return userRepo.findByEmail(email);
     }
