@@ -45,7 +45,7 @@
                 </th:block>
               </div>
               <div class="card-body">
-                <form action="/saveUser" enctype="multipart/form-data" method="post">
+                <form action="/saveUser" enctype="multipart/form-data" id="userRegister" novalidate method="post">
                   <div class="row mb-3">
                     <div class="col">
                       <label class="form-label" for="name"> Name</label>
@@ -170,9 +170,9 @@
                       <label class="form-label" for="cpassword">Confirm Password</label>
                       <div class="input-group">
                         <input
-                          id="cpassword"
+                          id="confirmPassword"
                           class="form-control"
-                          name="cpassword"
+                          name="confirmPassword"
                           type="password"
                           required
                           placeholder="Confirm Password"
