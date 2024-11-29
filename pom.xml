@@ -74,12 +74,16 @@
     <!-- <version>3.3.5</version> -->
 </dependency>
 <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk -->
- <!-- AWS SDK -->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk</artifactId>
-            <version>1.12.779</version>
-        </dependency>
+
+
+
+
+
+<!-- Removed dependencies  to resolve conflict -->
+
+
+
+
 
 	</dependencies>
 
