@@ -4,9 +4,11 @@ import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ecommerce.MarketMate.model.productOrder;
 import com.ecommerce.MarketMate.model.userDetails;
@@ -23,6 +25,13 @@ public class CommonUtil {
 
     @Autowired
     private userService userService;
+
+     @Value("${aws.s3.bucket.category}")
+    private String categoryBucket;
+    @Value("${aws.s3.bucket.product}")
+    private String productBucket;
+    @Value("${aws.s3.bucket.profile}")
+    private String profileBucket;
 
 
     public  Boolean sendMail(String url, String recipientEmail) throws UnsupportedEncodingException, MessagingException{
@@ -87,6 +96,23 @@ public class CommonUtil {
         String email=p.getName();
         userDetails user=userService.getUserByEmail(email);
         return user;
+    }
+
+    public String getImageUrl(MultipartFile file,Integer bucketType ){
+        String bucketName=null;
+        if(bucketType==1){
+            bucketName=categoryBucket;
+        }else if(bucketType==2){
+            bucketName=productBucket;
+
+        }else{
+            bucketName=profileBucket;
+        }
+        String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
+        String url="https://"+bucketName+".s3.amazonaws.com/"+imageName;
+
+
+        return url;
     }
 
 }

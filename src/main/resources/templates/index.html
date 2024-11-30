@@ -16,7 +16,7 @@
         <div class="carousel-inner">
           <div class="carousel-item active">
             <img
-              src="images/carousel/image1.jpg"
+              src="https://marketmate-profile.s3.eu-north-1.amazonaws.com/image1.jpg"
               class="d-block w-100"
               alt="..."
               height="350px"
@@ -24,7 +24,7 @@
           </div>
           <div class="carousel-item">
             <img
-              src="images/carousel/imag4.jpg"
+              src="https://marketmate-profile.s3.eu-north-1.amazonaws.com/imag4.jpg"
               class="d-block w-100"
               alt="..."
               height="350px"
@@ -32,7 +32,7 @@
           </div>
           <div class="carousel-item">
             <img
-              src="images/carousel/image3.jpg"
+              src="https://marketmate-profile.s3.eu-north-1.amazonaws.com/image3.jpg"
               class="d-block w-100"
               alt="..."
               height="350px"
@@ -40,7 +40,7 @@
           </div>
           <div class="carousel-item">
             <img
-              src="images/carousel/image2.jpg"
+              src="https://marketmate-profile.s3.eu-north-1.amazonaws.com/image2.jpg"
               class="d-block w-100"
               alt="..."
               height="350px"
@@ -82,7 +82,7 @@
             >
               <div class="card-body text-center">
                 <img
-                  th:src="@{'images/category/'+${c.categoryImage}}"
+                  th:src="${c.categoryImage}"
                   alt="category"
                   width="100%"
                   height="140px"
@@ -186,7 +186,7 @@
               <a th:href="@{'/product/'+${p.id}}" class="text-decoration-none text-dark">
                 <div class="card-body text-center">
                   <img
-                    th:src="@{'images/product/'+${p.image}}"
+                    th:src="${p.image}"
                     alt=""
                     class=""
                     width="65%"

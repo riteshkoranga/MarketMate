@@ -97,7 +97,7 @@
                       
                     />
                   </div>
-                  <img th:src="@{'/images/category/'+${category.categoryImage}}" alt="" width="100px" height="100px">
+                  <img th:src="${category.categoryImage}" alt="" width="100px" height="100px">
                   <div class="d-flex justify-content-center">
                     <a href="/admin/addCategory" class="btn btn-danger fs-5 me-1">Back </a>
                     <button class="btn btn-success text-center fs-5">

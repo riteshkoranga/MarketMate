@@ -10,7 +10,7 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -30,11 +30,13 @@ import com.ecommerce.MarketMate.model.Category;
 import com.ecommerce.MarketMate.model.productOrder;
 import com.ecommerce.MarketMate.model.userDetails;
 import com.ecommerce.MarketMate.service.CategoryService;
+import com.ecommerce.MarketMate.service.FileService;
 import com.ecommerce.MarketMate.service.commonService;
 import com.ecommerce.MarketMate.service.Cart.cartService;
 import com.ecommerce.MarketMate.service.User.userService;
 import com.ecommerce.MarketMate.service.orderService.orderService;
 import com.ecommerce.MarketMate.service.product.productService;
+import com.ecommerce.MarketMate.util.BucketType;
 import com.ecommerce.MarketMate.util.CommonUtil;
 import com.ecommerce.MarketMate.util.orderStatus;
 
@@ -64,6 +66,11 @@ public class AdminController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private FileService fileService;
+
+    
 
      @ModelAttribute
     public void getUserDetails(Principal p,Model m){
@@ -124,15 +131,15 @@ public class AdminController {
         @RequestParam("file") MultipartFile file,
         HttpSession session) {
 
-    System.out.println("Name: " + name);
-    System.out.println("Is Active: " + isActive);
-
+   
     Category category = new Category();
     category.setName(name);
     category.setIsActive(Boolean.parseBoolean(isActive));
 
-    String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
-    category.setCategoryImage(imageName);
+    //String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
+    
+    String ImageUrl =commonUtil.getImageUrl(file, BucketType.CATEGORY.getId());
+    category.setCategoryImage(ImageUrl);
 
     // Rest of your logic
     Boolean existCategory = categoryService.existsCategory(category.getName());
@@ -145,16 +152,18 @@ public class AdminController {
         if (ObjectUtils.isEmpty(c)) {
             session.setAttribute("errorMsg", "Internal server error");
         } else {
-            try {
-                File saveFile = new ClassPathResource("static/images").getFile();
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator
-                        + file.getOriginalFilename());
+            // try {
+            //     // File saveFile = new ClassPathResource("static/images").getFile();
+            //     // Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator
+            //     //         + file.getOriginalFilename());
 
-                System.out.println(path);
-                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            //     // System.out.println(path);
+            //     // Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                
+            // } catch (IOException e) {
+            //     e.printStackTrace();
+            // }
+            fileService.uploadFileS3(file, 1);
             session.setAttribute("successMsg", "Category Saved Successfully");
         }
     }
@@ -197,32 +206,35 @@ public String updateCategory(
 
     // Fetch the existing category by ID
     Category oldcat = categoryService.getCategoryById(id);
+    String ImageUrl =commonUtil.getImageUrl(file, BucketType.CATEGORY.getId());
+    
     if (oldcat == null) {
         session.setAttribute("errorMsg", "Category not found!");
         return "redirect:/admin/categories";
     }
 
-    System.out.println("Old Category Name: " + oldcat.getName());
+    //System.out.println("Old Category Name: " + oldcat.getName());
 
     // Update category fields
-    String imageName = file != null && !file.isEmpty() ? file.getOriginalFilename() : oldcat.getCategoryImage();
+    //String imageName = file != null && !file.isEmpty() ? file.getOriginalFilename() : oldcat.getCategoryImage();
     oldcat.setName(name);
     oldcat.setIsActive(isActive);
-    oldcat.setCategoryImage(imageName);
+    oldcat.setCategoryImage(ImageUrl);
 
     // Save the updated category
     Category updatedCategory = categoryService.saveCategory(oldcat);
     if (updatedCategory != null) {
         if (file != null && !file.isEmpty()) {
-            try {
-                // Save the new image file
-                File saveFile = new ClassPathResource("static/images").getFile();
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator
-                        + file.getOriginalFilename());
-                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            // try {
+            //     // Save the new image file
+            //     File saveFile = new ClassPathResource("static/images").getFile();
+            //     Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator
+            //             + file.getOriginalFilename());
+            //     Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            // } catch (IOException e) {
+            //     e.printStackTrace();
+            // }
+            fileService.uploadFileS3(file, 1);
         }
         session.setAttribute("sucMsg", "Category updated successfully!");
     } else {
@@ -240,25 +252,27 @@ public String updateCategory(
     public String saveProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile image,
             HttpSession session) {
 
-        String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
+        //String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
+        String ImageUrl =commonUtil.getImageUrl(image, BucketType.PRODUCT.getId());
 
-        product.setImage(imageName);
+        product.setImage(ImageUrl);
         product.setDiscount(0);
         product.setDiscountPrice(product.getPrice());
 
         Product saveProduct = productService.saveProduct(product);
         if (!ObjectUtils.isEmpty(saveProduct)) {
 
-            try {
-                File saveFile = new ClassPathResource("static/images").getFile();
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product" + File.separator
-                        + image.getOriginalFilename());
+            // try {
+            //     File saveFile = new ClassPathResource("static/images").getFile();
+            //     Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product" + File.separator
+            //             + image.getOriginalFilename());
 
-                System.out.println(path);
-                Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            //     System.out.println(path);
+            //     Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            // } catch (IOException e) {
+            //     e.printStackTrace();
+            // }
+            fileService.uploadFileS3(image, BucketType.PRODUCT.getId());
 
             session.setAttribute("successMsg", "Product saved successfully");
         } else {
@@ -270,7 +284,7 @@ public String updateCategory(
     }
 
     @GetMapping("/viewProducts")
-    public String viewProducts(Model m,@RequestParam(defaultValue = "") String ch,@RequestParam(name = "pageNo",defaultValue = "0") Integer pageNo,@RequestParam(name = "pageSize",defaultValue = "5") Integer pageSize) {
+    public String viewProducts(Model m,@RequestParam(defaultValue = "") String ch,@RequestParam(name = "pageNo",defaultValue = "0") Integer pageNo,@RequestParam(name = "pageSize",defaultValue = "10") Integer pageSize) {
         // List<Product> products=null;
         // if(ch!=null && ch.length()>0){
         //     products=productService.searchProduct(ch);
@@ -378,7 +392,7 @@ public String updateCategory(
     }
 
     @GetMapping("/orders")
-    public String getAllOrders(Model m,@RequestParam(name = "pageNo",defaultValue = "0") Integer pageNo,@RequestParam(name = "pageSize",defaultValue = "5") Integer pageSize){
+    public String getAllOrders(Model m,@RequestParam(name = "pageNo",defaultValue = "0") Integer pageNo,@RequestParam(name = "pageSize",defaultValue = "10") Integer pageSize){
         // List<productOrder>orders=orderService.getAllOrders();
         // m.addAttribute("orders", orders);
         // m.addAttribute("search", false);

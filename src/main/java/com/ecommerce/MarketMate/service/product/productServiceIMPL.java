@@ -20,6 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ecommerce.MarketMate.model.Product;
 import com.ecommerce.MarketMate.repository.productRepo.productRepo;
+import com.ecommerce.MarketMate.service.FileService;
+import com.ecommerce.MarketMate.util.BucketType;
+import com.ecommerce.MarketMate.util.CommonUtil;
 
 
 
@@ -27,6 +30,11 @@ import com.ecommerce.MarketMate.repository.productRepo.productRepo;
 public class productServiceIMPL implements productService {
     @Autowired
     private productRepo prepo;
+    @Autowired
+    private CommonUtil commonUtil;
+    @Autowired
+    private FileService fileService;
+
 
     @Override
     public Product saveProduct(Product product) {
@@ -67,14 +75,22 @@ public class productServiceIMPL implements productService {
     @Override
     public Product updateProduct(Product product, MultipartFile image) {
         Product oldProduct = prepo.findById(product.getId()).orElse(null);
-        String imageName = image.isEmpty() ? oldProduct.getImage() : image.getOriginalFilename();
-        if (oldProduct != null) {
+        //String imageName = image.isEmpty() ? oldProduct.getImage() : image.getOriginalFilename();
+        String ImageUrl ="";
+        if(image.isEmpty()){
+            ImageUrl=oldProduct.getImage();
+            
+        }else{
+            ImageUrl =commonUtil.getImageUrl(image, BucketType.PRODUCT.getId());
+        }
+        
+        if (!ObjectUtils.isEmpty(oldProduct)) {
             oldProduct.setName(product.getName());
             oldProduct.setDescription(product.getDescription());
             oldProduct.setPrice(product.getPrice());
             oldProduct.setStock(product.getStock());
             oldProduct.setCategory(product.getCategory());
-            oldProduct.setImage(imageName);
+            oldProduct.setImage(ImageUrl);
             oldProduct.setIsActive(product.getIsActive());
 
             oldProduct.setDiscount(product.getDiscount());
@@ -87,16 +103,17 @@ public class productServiceIMPL implements productService {
         Product updateProduct = prepo.save(oldProduct);
         if (!ObjectUtils.isEmpty(updateProduct)) {
             if (!image.isEmpty()) {
-                try {
-                    File saveFile = new ClassPathResource("static/images").getFile();
-                    Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product" + File.separator
-                            + image.getOriginalFilename());
+                // try {
+                //     File saveFile = new ClassPathResource("static/images").getFile();
+                //     Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product" + File.separator
+                //             + image.getOriginalFilename());
 
-                    System.out.println(path);
-                    Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                //     System.out.println(path);
+                //     Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                // } catch (IOException e) {
+                //     e.printStackTrace();
+                // }
+                fileService.uploadFileS3(image, BucketType.PRODUCT.getId());
             }
             return product;
         }

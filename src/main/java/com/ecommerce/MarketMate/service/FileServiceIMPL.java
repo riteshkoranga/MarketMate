@@ -5,6 +5,7 @@ import java.lang.runtime.ObjectMethods;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +16,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 
 
-
+@Service
 public class FileServiceIMPL implements FileService{
 
     @Autowired
@@ -51,7 +52,7 @@ public class FileServiceIMPL implements FileService{
         objectMetadata.setContentLength(file.getSize());
 
 
-        PutObjectRequest putObjectRequest=new PutObjectRequest(bucketName,fileName,inputStream,null);
+        PutObjectRequest putObjectRequest=new PutObjectRequest(bucketName,fileName,inputStream,objectMetadata);
         PutObjectResult saveData=amazonS3.putObject(putObjectRequest);
         if(!ObjectUtils.isEmpty(saveData)){
 return true;

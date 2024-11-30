@@ -102,7 +102,7 @@ public class HomeController {
 
     @GetMapping("/products")
     public String product(Model m, @RequestParam(value = "category", defaultValue = "") String category,
-    @RequestParam(name = "pageNo", defaultValue="0") Integer pageNo,@RequestParam(name = "pageSize",defaultValue = "3") Integer pageSize,
+    @RequestParam(name = "pageNo", defaultValue="0") Integer pageNo,@RequestParam(name = "pageSize",defaultValue = "8") Integer pageSize,
             HttpSession session,@RequestParam(defaultValue = "") String ch) {
 
         // System.out.println(category);
