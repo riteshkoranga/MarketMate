@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.List;
 
-import org.eclipse.angus.mail.handlers.multipart_mixed;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
